@@ -17,7 +17,6 @@ terraform/
 │   └── azure/            # Azure-specific modules
 ├── examples/             # Usage examples by cloud provider
 ├── tests/                # Unit, integration, and E2E tests
-├── docs/                 # Comprehensive documentation
 └── scripts/              # Utility scripts
 ```
 
@@ -53,7 +52,7 @@ Reference modules using GitHub source with version tags:
 
 ```hcl
 module "sensor" {
-  source = "github.com/corelight/terraform//modules/aws/sensor?ref=v28.4.0-1"
+  source = "github.com/corelight/terraform//modules/aws/sensor?ref=v29.0.5-1"
 
   vpc_id                   = "vpc-xxxxx"
   corelight_sensor_ami_id  = "ami-xxxxx"
@@ -80,20 +79,20 @@ This repository uses **sensor-aligned versioning** where the version tracks the 
 ```
 
 **Examples**:
-- `28.4.0-1` - First Terraform release for Corelight sensor 28.4.0
-- `28.4.0-2` - Second Terraform release (Terraform changes only, same sensor)
-- `28.5.0-1` - First Terraform release for Corelight sensor 28.5.0
+- `29.0.5-1` - First Terraform release for Corelight sensor 29.0.5
+- `29.0.5-2` - Second Terraform release (Terraform changes only, same sensor)
+- `29.1.0-1` - First Terraform release for Corelight sensor 29.1.0
 
 ### Version Components
 
 | Component | Description | Example |
 |-----------|-------------|---------|
-| **SENSOR_VERSION** | Corelight sensor version compatibility | `28.4.0` |
+| **SENSOR_VERSION** | Corelight sensor version compatibility | `29.0.5` |
 | **TERRAFORM_METADATA** | Terraform-specific release number | `1`, `2`, `3`, etc. |
 
 ### Git Tags
 
-- Format: `v<VERSION>` (e.g., `v28.4.0-1`)
+- Format: `v<VERSION>` (e.g., `v29.0.5-1`)
 - All modules share the same version
 - Pin to specific versions in production
 
@@ -112,28 +111,26 @@ module "sensor" {
 }
 ```
 
-**After (v28.4.0-1 monorepo)**:
+**After (v29.0.5-1 monorepo)**:
 ```hcl
 module "config" {
-  source = "github.com/corelight/terraform//modules/_shared/config/sensor?ref=v28.4.0-1"
+  source = "github.com/corelight/terraform//modules/_shared/config/sensor?ref=v29.0.5-1"
 }
 
 module "sensor" {
-  source = "github.com/corelight/terraform//modules/aws/sensor?ref=v28.4.0-1"
+  source = "github.com/corelight/terraform//modules/aws/sensor?ref=v29.0.5-1"
 }
 ```
 
-See [docs/migrations/v1-to-v2.md](./docs/migrations/v1-to-v2.md) for detailed migration instructions.
+Update each module source as shown above; see the per-module READMEs under [modules/](./modules/) for module-specific inputs and outputs.
 
 ## Documentation
 
-Comprehensive documentation is available in the [docs/](./docs/) directory:
+Documentation lives alongside the code:
 
-- **[Architecture](./docs/architecture/)** - High-level design and patterns
-- **[Guides](./docs/guides/)** - Getting started guides by cloud provider
-- **[Migrations](./docs/migrations/)** - Migration guides from standalone repos
-- **[Reference](./docs/reference/)** - Standards and conventions
-- **[Development](./docs/development/)** - Contributing guidelines
+- **Modules** - Each module has its own README under [modules/](./modules/) documenting its inputs, outputs, and usage.
+- **Examples** - Runnable, documented examples under [examples/](./examples/).
+- **Contributing** - See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Development
 
@@ -179,7 +176,7 @@ just lint
 just test-aws
 ```
 
-See [docs/development/testing-guide.md](./docs/development/testing-guide.md) for comprehensive testing instructions.
+Run `just --list` to see all available tasks.
 
 ### CI/CD
 
@@ -194,7 +191,6 @@ GitHub Actions automatically:
 
 We welcome contributions! Please see:
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution guidelines
-- [docs/development/code-review-guidelines.md](./docs/development/code-review-guidelines.md) - Code review process
 
 ## Requirements
 
@@ -204,8 +200,7 @@ We welcome contributions! Please see:
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/corelight/terraform/issues)
-- **Documentation**: Module-specific READMEs and [docs/](./docs/)
-- **Troubleshooting**: [docs/troubleshooting/](./docs/troubleshooting/)
+- **Documentation**: Module-specific READMEs under [modules/](./modules/) and examples under [examples/](./examples/)
 
 ## License
 
