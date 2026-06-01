@@ -1,0 +1,48 @@
+# Deployment Configuration
+deployment_name = "<your-deployment-name>" # Example: my-sensor (used as prefix for resource names to avoid conflicts)
+
+# Azure Configuration
+location            = "<azure-region>"        # Example: eastus
+resource_group_name = "<resource-group-name>" # Example: corelight-sensor-rg
+
+# Virtual Network Configuration
+virtual_network_name           = "<vnet-name>"           # Example: my-vnet
+virtual_network_resource_group = "<vnet-resource-group>" # Example: networking-rg
+management_subnet_cidr         = "<management-cidr>"     # Example: 10.0.1.0/24
+monitoring_subnet_cidr         = "<monitoring-cidr>"     # Example: 10.0.2.0/24
+
+# Sensor Configuration
+corelight_sensor_image_id = "<corelight-image-resource-id>" # Request from your Corelight account executive
+sensor_ssh_public_key     = "<ssh-public-key>"              # Example: ssh-rsa AAAA... user@host
+community_string          = "<your-sensor-api-password>"    # Password for sensor API access
+
+# Licensing (Choose ONE option below)
+
+# Option A: License Key
+license_key = "<your-corelight-license-key>"
+
+# Option B: Fleet Integration (comment out license_key if using Fleet)
+# fleet_token          = "<your-fleet-pairing-token>"    # From Fleet UI
+# fleet_url            = "<your-fleet-url>"              # Example: https://fleet.example.com:1443/fleet/v1/internal/softsensor/websocket
+# fleet_server_sslname = "<your-fleet-server-hostname>"  # Example: fleet.example.com
+
+# Optional: VM Configuration
+# virtual_machine_size         = "Standard_D4s_v3"
+# virtual_machine_os_disk_size = 500
+
+# Optional: Security/Compliance
+# fedramp_mode_enabled = false
+# prometheus_enabled   = false
+# azure_fips_enabled   = false
+
+# Optional: Enrichment Integration
+# enrichment_storage_account_id = "<storage-account-resource-id>"
+
+# Tags
+tags = {
+  terraform   = "true"
+  purpose     = "Corelight"
+  environment = "<your-environment>" # Example: production, staging, dev
+  project     = "<your-project-name>" # Example: network-security
+}
+

@@ -1,0 +1,83 @@
+################################################################################
+# GCP Configuration
+################################################################################
+
+project_id = "<your-gcp-project-id>"
+region     = "us-west1"
+zone       = "us-west1-a"
+
+# Path to GCP credentials file (optional, uses application default credentials if not specified)
+# credentials_file = "~/.config/gcloud/application_default_credentials.json"
+
+################################################################################
+# Network Configuration
+################################################################################
+
+# CIDR blocks and network settings
+subnetwork_mgmt_cidr   = "10.129.0.0/24"
+subnetwork_mon_cidr    = "10.3.0.0/24"
+subnetwork_mon_gateway = "10.3.0.1"
+
+# Network resource names
+network_mgmt_name    = "corelight-mgmt"
+network_prod_name    = "corelight-prod"
+subnetwork_mgmt_name = "corelight-subnet"
+subnetwork_mon_name  = "corelight-mon-subnet"
+
+# Firewall resource names
+firewall_ssh_to_mgmt_name = "corelight-allow-ssh-inbound-to-mgmt"
+firewall_internal_name    = "corelight-allow-internal"
+
+# Router and NAT resource names
+router_name = "corelight-mgmt-router"
+nat_name    = "corelight-mgmt-nat"
+
+################################################################################
+# SSH Configuration
+################################################################################
+
+instance_ssh_key_pub = "~/.ssh/id_rsa.pub"
+
+################################################################################
+# Image Configuration
+################################################################################
+
+instance_sensor_image = "projects/corelight-image-dist-prod/global/images/corelight-sensor-v28-3-3-us"
+
+################################################################################
+# Corelight Sensor Configuration
+################################################################################
+
+# Path to Corelight sensor license file (optional if using Fleet)
+license_key_file_path = ""  # Example: "~/corelight-license.txt"
+
+# Sensor API password
+community_string = "your-sensor-api-password"
+
+################################################################################
+# Fleet Configuration
+################################################################################
+
+fleet_token          = "your-fleet-pairing-token"
+fleet_url            = "https://fleet.example.com:1443/fleet/v1/internal/softsensor/websocket"
+fleet_server_sslname = ""
+
+################################################################################
+# Sensor Resource Names (customize to avoid conflicts)
+################################################################################
+
+# Instance template and group manager
+instance_template_resource_name_prefix              = "corelight-mig-template-"
+instance_template_group_manager_resource_name       = "corelight-mig-manager"
+instance_template_group_manager_base_instance_name  = "corelight"
+region_autoscaler_resource_name                     = "corelight-autoscale"
+
+# Health check and load balancer
+region_health_check_resource_name    = "corelight-traffic-monitor-health-check"
+firewall_resource_name               = "corelight-sensor-health-check-rule"
+region_backend_service_resource_name = "corelight-traffic-ilb-backend-service"
+forwarding_rule_resource_name        = "corelight-traffic-forwarding-rule"
+
+# Packet mirroring
+packet_mirroring_resource_name = "corelight-traffic-mirroring"
+packet_mirror_network_tag      = "traffic-source"

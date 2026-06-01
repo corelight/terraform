@@ -1,0 +1,15 @@
+project_id             = "my-gcp-project"
+location               = "us-central1"
+zone                   = "us-central1-a"
+credentials_file       = "/path/to/credentials.json"
+organization_id        = "987654321"
+folder_id              = "123456789"
+enrichment_bucket_name = "my-enrichment-data-bucket"
+service_account_id     = "enrichment-service-account"
+custom_org_role_id     = "corelight_enrichment_role"
+
+labels = {
+  terraform = true
+  example   = true
+  purpose   = "corelight"
+}

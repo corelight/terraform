@@ -1,0 +1,29 @@
+# AWS Provider Configuration
+region = "us-east-1"
+
+# Tags applied to all resources (via provider default_tags)
+tags = {
+  ManagedBy   = "terraform"
+  Project     = "corelight-fleet"
+}
+
+# Networking
+vpc_id            = "<vpc where resources are deployed>"
+public_subnets    = ["<public subnet 1>", "<public subnet 2>"]
+private_subnet    = "<private subnet>"
+route53_zone_name = "<route53 zone name>"
+subdomain         = "<subdomain for fleet>"
+certificate_arn   = "<certificate arn for fleet>"
+
+# EC2 Configuration
+aws_key_pair_name = "<aws key pair name>"
+
+# Fleet Configuration
+community_string               = "<community string for fleet>"
+fleet_username                 = "<fleet username>"
+fleet_password                 = "<fleet password>"
+fleet_certificate_file_path    = "<path to fleet certificate file>"
+fleet_sensor_license_file_path = "<path to fleet sensor license file>"
+
+# Optional Configuration (uncomment to override defaults)
+# fleet_ami_id = "ami-xxxxx"  # Optional: Custom AMI for Fleet (defaults to latest Ubuntu 22.04)

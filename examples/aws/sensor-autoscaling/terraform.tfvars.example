@@ -1,0 +1,33 @@
+# AWS Provider Configuration
+region = "us-east-1"
+
+# Deployment Configuration
+deployment_name = "<your-deployment-name>" # Example: my-sensor (used as prefix for resource names to avoid conflicts)
+
+# VPC Configuration
+vpc_id                = "<your-vpc-id>"                 # Example: vpc-0123456789abcdef0
+monitoring_subnet_ids = ["<monitoring-subnet-id-az1>"]  # Example: ["subnet-abc123", "subnet-def456"]
+management_subnet_ids = ["<management-subnet-id-az1>"]  # Example: ["subnet-xyz789", "subnet-uvw012"]
+
+# Sensor Configuration
+sensor_ssh_key_pair_name = "<your-ssh-key-pair-name>" # Example: my-sensor-keypair
+sensor_ami_id            = "<corelight-sensor-ami-id>" # Request from your Corelight account executive
+community_string         = "<your-sensor-api-password>" # Password for sensor API access
+
+# Licensing (Choose ONE option below)
+
+# Option A: License File
+license_key_file_path = "/path/to/license.txt" # Path to your license file
+
+# Option B: Fleet Integration (comment out license_key_file_path if using Fleet)
+# fleet_token          = "<your-fleet-pairing-token>"    # From Fleet UI
+# fleet_url            = "<your-fleet-url>"              # Example: https://fleet.example.com:1443/fleet/v1/internal/softsensor/websocket
+# fleet_server_sslname = "<your-fleet-server-hostname>"  # Example: fleet.example.com
+
+# Tags (applied to all resources via provider default_tags)
+tags = {
+  terraform   = "true"
+  purpose     = "Corelight"
+  environment = "<your-environment>"  # Example: production, staging, dev
+  project     = "<your-project-name>" # Example: network-security
+}

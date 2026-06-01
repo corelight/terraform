@@ -1,0 +1,45 @@
+# Required Variables
+
+# Primary AWS region where enrichment resources will be deployed
+primary_region = "us-east-1"
+
+# S3 bucket name for storing enrichment data
+bucket_name = "corelight-enrichment"
+
+# ECR repository and image details
+ecr_repository_name = "aws-enrichment"
+image_name = "12345.dkr.ecr.us-east-2.amazonaws.com/aws-enrichment"
+image_tag  = "latest"
+
+# EventBridge rule name for secondary regions
+secondary_rule_name = "corelight-ec2-state-change"
+
+# Network configuration
+vpc_id             = "vpc-xxxxx"
+monitoring_subnet  = "subnet-xxxxx"
+management_subnet  = "subnet-xxxxx"
+
+# Sensor configuration
+sensor_ssh_key_pair_name = "my-key-pair"
+sensor_ami_id            = "ami-xxxxx"
+license_key_file         = "/path/to/license.txt"
+community_string         = "your-sensor-api-password"
+
+# Fleet configuration
+fleet_url            = "https://fleet.example.com"
+fleet_token          = "your-fleet-pairing-token"
+fleet_server_sslname = "fleet.example.com"
+
+# AWS regions to scan for enrichment data
+my_regions = [
+  "us-east-1",
+  "us-east-2",
+  "us-west-1",
+  "us-west-2"
+]
+
+# Tags to apply to all resources (via provider default_tags)
+tags = {
+  ManagedBy   = "terraform"
+  Project     = "corelight-enrichment"
+}

@@ -1,0 +1,48 @@
+# AWS Provider Configuration
+region = "us-east-1"
+
+# Tags (applied to all resources via provider default_tags)
+tags = {
+  terraform   = "true"
+  purpose     = "Corelight"
+  environment = "<your-environment>"  # Example: production, staging, dev
+  project     = "<your-project-name>" # Example: network-security
+}
+
+# Deployment Configuration
+deployment_name = "<your-deployment-name>" # Example: my-flow-sensor (used as prefix for resource names to avoid conflicts)
+
+# Sensor Configuration
+ami_id            = "<corelight-sensor-ami-id>"  # Request from your Corelight account executive
+aws_key_pair_name = "<your-ssh-key-pair-name>"   # Example: my-sensor-keypair
+community_string  = "<your-sensor-api-password>" # Password for sensor API access
+
+# Licensing (Choose ONE option below)
+
+# Option A: License File
+license_key_file_path = "/path/to/license.txt" # Path to your license file
+
+# Option B: Fleet Integration (comment out license_key_file_path if using Fleet)
+# fleet_token          = "<your-fleet-pairing-token>"    # From Fleet UI
+# fleet_url            = "<your-fleet-url>"              # Example: https://fleet.example.com:1443/fleet/v1/internal/softsensor/websocket
+# fleet_server_sslname = "<your-fleet-server-hostname>"  # Example: fleet.example.com
+
+# Network Configuration - Monitoring Interface
+monitoring_interface_subnet_id   = "<monitoring-subnet-id>" # Example: subnet-abc123
+monitoring_security_group_vpc_id = "<vpc-id>"               # Example: vpc-0123456789abcdef0
+
+# Network Configuration - Management Interface
+management_interface_subnet_id   = "<management-subnet-id>" # Example: subnet-xyz789
+management_interface_public_ip   = true                     # Set to false if not using public IP
+management_security_group_vpc_id = "<vpc-id>"               # Example: vpc-0123456789abcdef0
+
+# Security Configuration
+ssh_allow_cidrs = ["<your-ip-cidr>"] # Example: ["10.0.0.0/8", "192.168.1.0/24"]
+
+# VPC Flow Logs Configuration
+vpc_flow_logs_bucket_arn = "arn:aws:s3:::<vpc-flow-logs-bucket-name>" # ARN of the S3 bucket containing VPC Flow Logs
+
+# Cross-Account Access (Optional)
+# Uncomment and set to allow the Flow Sensor to assume into other accounts that ship logs to the bucket.
+# Pair with the modules/aws/sensor-single/submodules/vpc_flow_assume_role submodule deployed in those accounts.
+# cross_account_role_name = "corelight-vpc-flow-cross-account-role"

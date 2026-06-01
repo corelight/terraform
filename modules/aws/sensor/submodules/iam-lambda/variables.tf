@@ -1,0 +1,35 @@
+variable "lambda_cloudwatch_log_group_arn" {
+  description = "ARN of the log group the Lambda will use to create streams and write logs"
+  type        = string
+}
+
+variable "sensor_autoscaling_group_arn" {
+  description = "ARN of the sensor EC2 autoscaling group of Corelight sensors"
+  type        = string
+}
+
+variable "subnet_arns" {
+  description = "ARNs of the subnets where new ENIs should be created (management), one per availability zone"
+  type        = list(string)
+}
+
+variable "security_group_arn" {
+  description = "ARN of the security group that should be associated with newly created ENIs"
+  type        = string
+}
+
+variable "lambda_role_name" {
+  description = "Name of the ENI management lambda role"
+  type        = string
+  default     = "corelight-asg-sensor-nic-manager-lambda-role"
+}
+
+# Variables with defaults
+variable "lambda_policy_name" {
+  description = "Name of the policy granting permission to the ENI management lambda"
+  type        = string
+  default     = "corelight-asg-sensor-nic-manager-lambda-policy"
+}
+
+# Tags are applied via provider default_tags configuration
+# See: https://registry.terraform.io/providers/hashicorp/aws/latest/docs#default_tags

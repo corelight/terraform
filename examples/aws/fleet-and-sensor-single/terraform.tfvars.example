@@ -1,0 +1,66 @@
+# AWS Provider Configuration
+region = "us-east-1"
+
+# Tags applied to all resources (via provider default_tags)
+tags = {
+  ManagedBy = "terraform"
+  Project   = "corelight-fleet-and-sensor"
+}
+
+# Common Configuration
+aws_key_pair_name = "<aws key pair name>"
+
+# Fleet Configuration
+fleet_vpc_id      = "<vpc where fleet is deployed>"
+public_subnets    = ["<public subnet 1>", "<public subnet 2>"]
+private_subnet    = "<private subnet>"
+route53_zone_name = "<route53 zone name>"
+subdomain         = "<subdomain for fleet>"
+certificate_arn   = "<certificate arn for fleet>"
+
+# Fleet Authentication
+community_string               = "corelight-community"
+fleet_username                 = "admin"
+fleet_password                 = "changeme"
+fleet_certificate_file_path    = "path/to/certificate.pem"
+fleet_sensor_license_file_path = "path/to/license.txt"
+
+# Fleet Optional Configuration (uncomment to override defaults)
+# alb_security_group_id              = null
+# instance_security_group_id         = null
+# alb_https_ingress_cidr_blocks      = ["0.0.0.0/0"]
+# alb_api_ingress_cidr_blocks        = ["0.0.0.0/0"]
+# admin_cidr_blocks                  = ["0.0.0.0/0"]
+# fleet_ami_id                       = "ami-xxxxx"  # Optional: Custom AMI for Fleet (defaults to latest Ubuntu 22.04)
+# aws_ec2_size                       = "t3.large"
+# aws_volume_size                    = 50
+# fleet_version                      = "28.3.3"
+# radius_enable                      = false
+# radius_address                     = ""
+# radius_shared_secret               = ""
+# fleet_instance_name                = "corelight-fleet"
+# fleet_alb_name                     = "corelight-fleet-alb"
+# fleet_lb_target_group_name         = "corelight-fleet-tg"
+# fleet_alb_security_group_name      = "corelight-fleet-alb-security-group"
+# fleet_instance_security_group_name = "corelight-fleet-instance-security-group"
+
+# Sensor Configuration
+sensor_vpc_id           = "<vpc where sensor is deployed>"
+sensor_instance_name    = "terraform-corelight-sensor"
+corelight_sensor_ami_id = "<sensor ami ID> 
+management_subnet_id    = "<management subnet ID>"
+monitoring_subnet_id    = "<monitoring subnet ID>"
+
+# Sensor Instance Configuration
+associate_public_ip_address = false
+
+# Sensor Optional Configuration (uncomment to override defaults)
+# custom_sensor_user_data                      = ""
+# management_interface_name                    = "corelight-sensor-nic-management"
+# monitoring_interface_name                    = "corelight-sensor-nic-monitoring"
+# instance_type                                = "c5.2xlarge"
+# ebs_volume_size                              = 500
+# sensor_management_security_group_name        = "corelight-management-security-group"
+# sensor_management_security_group_description = "management security group for the sensor which allows ssh"
+# sensor_monitoring_security_group_name        = "corelight-monitoring-security-group"
+# sensor_monitoring_security_group_description = "monitoring security group for the sensor which allows ssh"

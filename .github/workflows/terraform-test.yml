@@ -1,0 +1,84 @@
+name: Terraform Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.10"
+
+      - name: Setup just
+        uses: extractions/setup-just@v2
+        with:
+          just-version: 1.51.0
+
+      - name: Create dummy lambda payload for tests
+        run: |
+          mkdir -p tests/unit/modules/aws/sensor
+          echo "mock content" > /tmp/mock.txt
+          zip -q tests/unit/modules/aws/sensor/lambda_payload.zip /tmp/mock.txt
+
+      - name: Run unit tests
+        run: just test-unit
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_DEFAULT_REGION: us-east-1
+
+  python-tests:
+    name: AWS Lambda Python Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Setup just
+        uses: extractions/setup-just@v2
+        with:
+          just-version: 1.51.0
+
+      - name: Run Python tests
+        run: just test-aws
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+
+  validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.10"
+
+      - name: Setup just
+        uses: extractions/setup-just@v2
+        with:
+          just-version: 1.51.0
+
+      - name: Validate modules
+        run: just validate

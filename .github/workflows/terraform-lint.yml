@@ -1,0 +1,63 @@
+name: Terraform CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  fmt-check:
+    name: Terraform Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.0
+
+      - name: Setup just
+        uses: extractions/setup-just@v2
+        with:
+          just-version: 1.51.0
+
+      - name: Run Terraform Format Check
+        run: just fmt-check
+
+  lint:
+    name: Terraform Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.0
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Setup terraform-docs
+        run: |
+          curl -fsSL https://terraform-docs.io/dl/v0.24.0/terraform-docs-v0.24.0-$(uname -s | tr '[:upper:]' '[:lower:]')-amd64.tar.gz | tar -xz -C /usr/local/bin terraform-docs
+          terraform-docs --version
+
+      - name: Setup just
+        uses: extractions/setup-just@v2
+        with:
+          just-version: 1.51.0
+
+      - name: Run Terraform Lint
+        run: just lint
+
+      - name: Run release script tests
+        run: just test-release

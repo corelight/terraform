@@ -1,0 +1,159 @@
+####################################################################################################
+# GCP Project and Region
+####################################################################################################
+
+project_id       = "your-consumer-project-id"
+region           = "us-west1"
+zone             = "us-west1-a"
+credentials_file = "~/.config/gcloud/application_default_credentials.json"
+
+####################################################################################################
+# Consumer Project: Network Configuration
+####################################################################################################
+
+# Management VPC (defaults to sensor_network_name-mgmt if not specified)
+# network_mgmt_name = "corelight-mgmt-network"
+
+subnetwork_mgmt_name = "corelight-mgmt-subnet"
+subnetwork_mgmt_cidr = "10.0.1.0/24"
+
+# Monitoring VPC (receives mirrored traffic)
+sensor_network_name  = "corelight-sensor-network"
+subnetwork_mon_name  = "corelight-mon-subnet"
+subnetwork_mon_cidr  = "10.0.2.0/24"
+subnetwork_mon_gateway = "10.0.2.1"
+
+####################################################################################################
+# Consumer Project: Sensor Instance Configuration
+####################################################################################################
+
+instance_size      = "e2-standard-8"
+image              = "projects/your-project/global/images/corelight-sensor-v28-4-0"
+image_disk_size    = "500"
+instance_ssh_user  = "ec2-user"
+instance_ssh_key_pub = "~/.ssh/id_rsa.pub"
+
+# Optional: Use a dedicated service account for sensor instances
+# sensor_service_account_email = "corelight-sensor@your-project.iam.gserviceaccount.com"
+
+####################################################################################################
+# Consumer Project: Fleet and License Configuration
+####################################################################################################
+
+fleet_token          = "your-fleet-pairing-token-here"
+fleet_url            = "https://your-fleet.example.com"
+fleet_server_sslname = "your-fleet.example.com"
+community_string     = "your-fleet-community-string-here"
+
+# Optional: Provide license file if not using Fleet
+license_key_file_path = ""
+
+# Optional: HTTP/HTTPS proxy configuration for Fleet traffic
+# fleet_http_proxy  = "http://proxy.example.com:8080"
+# fleet_https_proxy = "https://proxy.example.com:8443"
+# fleet_no_proxy    = "169.254.169.254,metadata.google.internal"
+
+####################################################################################################
+# Consumer Project: MIG and Autoscaling
+####################################################################################################
+
+instance_template_resource_name_prefix             = "corelight-mig-template-"
+instance_template_group_manager_resource_name      = "corelight-mig-manager"
+instance_template_group_manager_base_instance_name = "corelight"
+
+region_autoscaler_resource_name                    = "corelight-autoscaler"
+region_autoscaler_policy_min_replicas              = 1
+region_autoscaler_policy_max_replicas              = 3
+region_autoscaler_policy_cooldown_period           = 600
+region_autoscaler_policy_cpu_utilization_target    = 0.7
+
+####################################################################################################
+# Consumer Project: Load Balancer and Health Checks
+####################################################################################################
+
+region_health_check_resource_name    = "corelight-health-check"
+health_check_http_port               = "41080"
+region_probe_source_ranges_cidr      = ["130.211.0.0/22", "35.191.0.0/16"]
+firewall_resource_name               = "corelight-health-check-rule"
+region_backend_service_resource_name = "corelight-backend-service"
+forwarding_rule_resource_name        = "corelight-forwarding-rule"
+
+####################################################################################################
+# NSI Mirroring Resources
+####################################################################################################
+
+mirroring_deployment_group_id  = "corelight-mirroring-deployment-group"
+mirroring_deployment_id        = "corelight-mirroring-deployment"
+mirroring_endpoint_group_id    = "corelight-mirroring-endpoint-group"
+
+# Optional: Labels to apply to NSI mirroring resources
+mirroring_labels = {
+  environment = "production"
+  managed_by  = "terraform"
+  team        = "security"
+}
+
+####################################################################################################
+# Producer Project: VPCs to Mirror
+####################################################################################################
+
+# Example 1: Single VPC in the same project
+mirrored_vpcs = [
+  {
+    network = "customer-vpc-1"
+  }
+]
+
+# Example 2: Multiple VPCs in the same project
+# mirrored_vpcs = [
+#   { network = "customer-vpc-1" },
+#   { network = "customer-vpc-2" },
+#   { network = "customer-vpc-3" }
+# ]
+
+# Example 3: Cross-project VPCs
+# mirrored_vpcs = [
+#   { network = "customer-vpc-1", project_id = "customer-project-1" },
+#   { network = "customer-vpc-2", project_id = "customer-project-2" },
+#   { network = "shared-vpc",     project_id = "shared-vpc-project" }
+# ]
+
+# Example 4: Using full VPC self_link
+# mirrored_vpcs = [
+#   { network = "projects/customer-project-1/global/networks/customer-vpc-1" }
+# ]
+
+####################################################################################################
+# Producer Project: Security Profile Configuration
+####################################################################################################
+
+# REQUIRED: Organization ID (numeric)
+organization_id = "123456789"
+
+# Option 1: Let Terraform construct the full resource ID using organization_id and profile group name
+mirroring_profile_group_name = "corelight-mirror-profile-group"
+
+# Option 2: Provide the full resource ID directly (overrides organization_id + profile group name)
+# security_profile_group_id = "organizations/123456789/locations/global/securityProfileGroups/corelight-mirror-profile-group"
+
+####################################################################################################
+# Producer Project: Traffic Selection
+####################################################################################################
+
+# Mirror all traffic (default)
+mirroring_src_ip_ranges  = ["0.0.0.0/0"]
+mirroring_dest_ip_ranges = ["0.0.0.0/0"]
+
+# Example: Mirror only specific IP ranges
+# mirroring_src_ip_ranges = [
+#   "10.0.0.0/8",
+#   "172.16.0.0/12",
+#   "192.168.0.0/16"
+# ]
+# mirroring_dest_ip_ranges = [
+#   "0.0.0.0/0"
+# ]
+
+# Example: Mirror only internal traffic
+# mirroring_src_ip_ranges  = ["10.0.0.0/8"]
+# mirroring_dest_ip_ranges = ["10.0.0.0/8"]

@@ -1,0 +1,7 @@
+misconfigurations:
+  - id: AVD-AWS-0104
+    statement: public egress traffic is allowed to the internet
+  - id: AVD-AWS-0130
+    statement: allow for legacy metadata service use
+  - id: AVD-AWS-0107
+    statement: bastion host requires SSH access from configurable CIDR blocks for administrative access
