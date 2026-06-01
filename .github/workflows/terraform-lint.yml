@@ -13,15 +13,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: 1.14.0
 
       - name: Setup just
-        uses: extractions/setup-just@v2
+        uses: extractions/setup-just@v4
         with:
           just-version: 1.51.0
 
@@ -34,10 +34,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: 1.14.0
 
@@ -52,7 +52,7 @@ jobs:
           terraform-docs --version
 
       - name: Setup just
-        uses: extractions/setup-just@v2
+        uses: extractions/setup-just@v4
         with:
           just-version: 1.51.0
 
