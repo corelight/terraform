@@ -29,9 +29,15 @@ just lint
 ### Test
 
 ```bash
-cd tests/unit
-go test -v ./...
+# Run everything (Terraform unit tests, AWS Lambda Python tests, release tests)
+just test
+
+# Or run a single suite
+just test-unit
 ```
+
+Terraform tests live in `tests/` directories alongside each module and example
+(e.g. `modules/aws/sensor/tests/`); `just test-unit` discovers and runs them.
 
 ## Module Standards
 

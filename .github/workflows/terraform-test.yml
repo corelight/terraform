@@ -26,12 +26,6 @@ jobs:
         with:
           just-version: 1.51.0
 
-      - name: Create dummy lambda payload for tests
-        run: |
-          mkdir -p tests/unit/modules/aws/sensor
-          echo "mock content" > /tmp/mock.txt
-          zip -q tests/unit/modules/aws/sensor/lambda_payload.zip /tmp/mock.txt
-
       - name: Run unit tests
         run: just test-unit
         env:
