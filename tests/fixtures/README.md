@@ -1,3 +1,0 @@
-# fixtures
-
-Documentation coming soon.

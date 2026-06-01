@@ -7,7 +7,7 @@ run "verify_basic_config_generation" {
   command = plan
 
   module {
-    source = "./modules/_shared/config/sensor"
+    source = "./."
   }
 
   variables {
@@ -34,7 +34,7 @@ run "verify_fleet_config" {
   command = plan
 
   module {
-    source = "./modules/_shared/config/sensor"
+    source = "./."
   }
 
   variables {
@@ -64,7 +64,7 @@ run "verify_gzip_option" {
   command = plan
 
   module {
-    source = "./modules/_shared/config/sensor"
+    source = "./."
   }
 
   variables {
@@ -92,7 +92,7 @@ run "verify_output_exists" {
   command = plan
 
   module {
-    source = "./modules/_shared/config/sensor"
+    source = "./."
   }
 
   variables {
