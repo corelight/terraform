@@ -15,18 +15,18 @@ resource "azurerm_network_security_group" "monitoring" {
 }
 
 resource "azurerm_network_security_rule" "mgmt_egress" {
-  count                       = var.management_nsg_id == "" ? 1 : 0
-  name                        = "AllowOutbound"
-  priority                    = 100
-  direction                   = "Outbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
+  count                        = var.management_nsg_id == "" ? 1 : 0
+  name                         = "AllowOutbound"
+  priority                     = 100
+  direction                    = "Outbound"
+  access                       = "Allow"
+  protocol                     = "*"
+  source_port_range            = "*"
+  destination_port_range       = "*"
+  source_address_prefix        = "*"
   destination_address_prefixes = var.egress_allow_cidrs
-  resource_group_name         = var.resource_group_name
-  network_security_group_name = azurerm_network_security_group.management[0].name
+  resource_group_name          = var.resource_group_name
+  network_security_group_name  = azurerm_network_security_group.management[0].name
 }
 
 resource "azurerm_network_security_rule" "mgmt_ssh_ingress" {
@@ -45,18 +45,18 @@ resource "azurerm_network_security_rule" "mgmt_ssh_ingress" {
 }
 
 resource "azurerm_network_security_rule" "mon_egress" {
-  count                       = var.monitoring_nsg_id == "" ? 1 : 0
-  name                        = "AllowOutbound"
-  priority                    = 100
-  direction                   = "Outbound"
-  access                      = "Allow"
-  protocol                    = "*"
-  source_port_range           = "*"
-  destination_port_range      = "*"
-  source_address_prefix       = "*"
+  count                        = var.monitoring_nsg_id == "" ? 1 : 0
+  name                         = "AllowOutbound"
+  priority                     = 100
+  direction                    = "Outbound"
+  access                       = "Allow"
+  protocol                     = "*"
+  source_port_range            = "*"
+  destination_port_range       = "*"
+  source_address_prefix        = "*"
   destination_address_prefixes = var.egress_allow_cidrs
-  resource_group_name         = var.resource_group_name
-  network_security_group_name = azurerm_network_security_group.monitoring[0].name
+  resource_group_name          = var.resource_group_name
+  network_security_group_name  = azurerm_network_security_group.monitoring[0].name
 }
 
 resource "azurerm_network_security_rule" "mon_vxlan_ingress" {
@@ -120,9 +120,9 @@ resource "azurerm_public_ip" "management" {
 }
 
 resource "azurerm_network_interface" "monitoring" {
-  name                          = "${var.deployment_name}-mon-nic"
-  location                      = var.location
-  resource_group_name           = var.resource_group_name
+  name                           = "${var.deployment_name}-mon-nic"
+  location                       = var.location
+  resource_group_name            = var.resource_group_name
   accelerated_networking_enabled = true
 
   ip_configuration {
