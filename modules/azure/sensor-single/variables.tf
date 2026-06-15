@@ -1,3 +1,5 @@
+# Deployment
+
 variable "deployment_name" {
   description = "Name prefix for all resources (used to avoid naming conflicts)"
   type        = string
@@ -14,6 +16,8 @@ variable "resource_group_name" {
   type        = string
 }
 
+# Sensor image — use scripts/azure/copy-azure-image.sh to copy the VHD and create the image
+
 variable "corelight_sensor_image_id" {
   description = "The resource ID of the Corelight sensor image"
   type        = string
@@ -25,10 +29,12 @@ variable "sensor_ssh_public_key" {
 }
 
 variable "community_string" {
-  description = "The community string (API password) for sensor management"
+  description = "The community string (API password) for sensor management, often referenced by Fleet"
   type        = string
   sensitive   = true
 }
+
+# Networking — subnets must exist before deploying this module
 
 variable "management_subnet_id" {
   description = "The subnet ID for the management network interface"
@@ -39,6 +45,16 @@ variable "monitoring_subnet_id" {
   description = "The subnet ID for the monitoring network interface"
   type        = string
 }
+
+# Licensing — choose ONE of the two options below:
+#
+#   Option 1: Standalone — set license_key only. The sensor runs independently
+#             without centralized management.
+#
+#   Option 2: Fleet-managed — set fleet_url + fleet_token (and optionally
+#             fleet_server_sslname). The sensor is managed via the Corelight
+#             Fleet UI which handles configuration, updates, and monitoring.
+#             license_key can be omitted when using Fleet.
 
 variable "license_key" {
   description = "Your Corelight sensor license key. Optional if fleet_url is configured."
@@ -51,6 +67,8 @@ variable "license_key" {
     error_message = "Either license_key must be provided or fleet_url must be configured."
   }
 }
+
+# Fleet configuration (Option 2) — required when managing the sensor via Fleet
 
 variable "fleet_token" {
   description = "(optional) the pairing token from the Fleet UI. Must be set if 'fleet_url' is provided"
@@ -115,7 +133,7 @@ variable "custom_sensor_user_data" {
   default     = ""
 }
 
-# Networking
+# Networking — NSG and access control
 
 variable "management_nsg_id" {
   description = "ID of a pre-existing NSG for the management NIC. If empty, one will be created."
@@ -159,7 +177,7 @@ variable "health_check_allow_cidrs" {
   default     = ["0.0.0.0/0"]
 }
 
-# Identity
+# Identity — attach managed identities for VNet flow log access or other Azure RBAC roles
 
 variable "user_assigned_identity_ids" {
   description = "List of user-assigned managed identity IDs to attach to the VM (e.g. for VNet flow log access)"

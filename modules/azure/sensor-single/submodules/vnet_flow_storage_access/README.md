@@ -6,7 +6,7 @@ Creates a user-assigned Managed Identity with `Storage Blob Data Reader` access 
 
 ```hcl
 module "vnet_flow_storage_access" {
-  source = "./submodules/vnet_flow_storage_access"
+  source = "github.com/corelight/terraform//modules/azure/sensor-single/submodules/vnet_flow_storage_access?ref=v29.0.5-1"
 
   resource_group_name = "my-resource-group"
   location            = "eastus"
@@ -14,7 +14,7 @@ module "vnet_flow_storage_access" {
 }
 ```
 
-Attach the identity to your VMSS and use the `identity_client_id` output for the sensor's VPC flow service configuration.
+Attach the identity to the sensor VM and use the `identity_client_id` output for the sensor's VNet flow service configuration.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

@@ -50,8 +50,8 @@ module "sensor" {
 
 ## Prerequisites
 
+- A Corelight sensor image must be available in the subscription. Use [`scripts/azure/copy-azure-image.sh`](../../../scripts/azure/copy-azure-image.sh) to copy the VHD and create a VM image.
 - The management subnet must have outbound internet access (via NAT gateway, Azure Firewall, or other mechanism) for Fleet connectivity.
-- A Corelight sensor image must be available in the subscription.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -71,7 +71,7 @@ module "sensor" {
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_community_string"></a> [community\_string](#input\_community\_string) | The community string (API password) for sensor management | `string` | n/a | yes |
+| <a name="input_community_string"></a> [community\_string](#input\_community\_string) | The community string (API password) for sensor management, often referenced by Fleet | `string` | n/a | yes |
 | <a name="input_corelight_sensor_image_id"></a> [corelight\_sensor\_image\_id](#input\_corelight\_sensor\_image\_id) | The resource ID of the Corelight sensor image | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | The Azure region where resources will be deployed | `string` | n/a | yes |
 | <a name="input_management_subnet_id"></a> [management\_subnet\_id](#input\_management\_subnet\_id) | The subnet ID for the management network interface | `string` | n/a | yes |
