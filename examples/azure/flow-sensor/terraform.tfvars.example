@@ -1,0 +1,42 @@
+# Azure Provider Configuration
+location = "eastus"
+
+# Tags
+tags = {
+  terraform   = "true"
+  purpose     = "Corelight"
+  environment = "<your-environment>"  # Example: production, staging, dev
+  project     = "<your-project-name>" # Example: network-security
+}
+
+# Deployment Configuration
+deployment_name = "<your-deployment-name>" # Example: my-flow-sensor (used as prefix for resource names)
+
+# Resource Group
+resource_group_name = "<your-resource-group>" # Example: corelight-flow-sensor-rg
+
+# Sensor Configuration
+corelight_sensor_image_id = "<corelight-sensor-image-id>" # Request from your Corelight account executive
+sensor_ssh_public_key     = "<your-ssh-public-key>"       # Contents of your SSH public key file
+community_string          = "<your-sensor-api-password>"  # Password for sensor API access
+
+# Licensing (Choose ONE option below)
+
+# Option A: License Key
+license_key = "<your-license-key>" # Your Corelight license key
+
+# Option B: Fleet Integration (comment out license_key if using Fleet)
+# fleet_token          = "<your-fleet-pairing-token>"    # From Fleet UI
+# fleet_url            = "<your-fleet-url>"              # Example: https://fleet.example.com:1443/fleet/v1/internal/softsensor/websocket
+# fleet_server_sslname = "<your-fleet-server-hostname>"  # Example: fleet.example.com
+
+# Network Configuration
+management_subnet_id       = "<management-subnet-id>" # Example: /subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.Network/virtualNetworks/xxx/subnets/management
+monitoring_subnet_id       = "<monitoring-subnet-id>"  # Example: /subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.Network/virtualNetworks/xxx/subnets/monitoring
+management_interface_public_ip = true                  # Set to false if not using public IP
+
+# Security Configuration
+ssh_allow_cidrs = ["<your-ip-cidr>"] # Example: ["10.0.0.0/8", "192.168.1.0/24"]
+
+# VNet Flow Logs Configuration
+storage_account_id = "<storage-account-resource-id>" # Example: /subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.Storage/storageAccounts/vnetflowlogs

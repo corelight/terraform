@@ -5,3 +5,7 @@ misconfigurations:
     statement: allow for legacy metadata service use
   - id: AVD-AWS-0107
     statement: bastion host requires SSH access from configurable CIDR blocks for administrative access
+  - id: AVD-AZU-0047
+    statement: sensor monitoring NIC requires configurable ingress CIDRs for VXLAN and health checks
+  - id: AVD-AZU-0051
+    statement: sensor requires outbound internet access for Fleet connectivity and updates
