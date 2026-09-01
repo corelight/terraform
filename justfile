@@ -42,6 +42,7 @@ test-unit:
     #!/usr/bin/env bash
     set -euo pipefail
     echo "Running unit tests..."
+    ./scripts/azure/tests/copy-azure-image_test.sh
     for test_dir in $(find examples modules -name "*.tftest.hcl" -exec dirname {} \; | sort -u); do
       parent_dir=$(dirname "$test_dir")
       echo "Testing: $parent_dir"

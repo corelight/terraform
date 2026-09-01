@@ -4,7 +4,7 @@ Utility scripts for managing Corelight sensor images in Azure.
 
 ## copy-azure-image.sh
 
-Copies a Corelight sensor VHD blob from a source Azure storage account (via SAS URL) to a destination storage account, then creates a managed image from it.
+Copies a Corelight sensor VHD blob from a source Azure storage account (via SAS URL) to a destination storage account, then publishes the VHD directly as an Azure Compute Gallery image version. Generation 2 image definitions advertise both SCSI and NVMe disk controller support. The staging VHD is deleted after publication succeeds.
 
 ### Prerequisites
 
@@ -55,4 +55,8 @@ The script automatically detects the sensor version from the SAS URL and selects
 - Sensor versions **< 28.4.0** use Hyper-V Generation **V1**
 - Sensor versions **>= 28.4.0** use Hyper-V Generation **V2**
 
-If the version cannot be detected, it defaults to V2.
+If the version cannot be detected, the script exits with an error.
+
+The script preserves the complete VHD name, including prerelease suffixes, as the Gallery image definition name and creates version `1.0.0` beneath it. For example, `corelight-sensor-v29.2.0-rc30.vhd` becomes definition `corelight-sensor-v29.2.0-rc30`, while the GA image becomes `corelight-sensor-v29.2.0`. Generation 2 definitions are created with `DiskControllerTypes=SCSI,NVMe`.
+
+Use the Gallery image version ID printed by the script as the Terraform `corelight_sensor_image_id` value.
