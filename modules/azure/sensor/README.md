@@ -73,7 +73,7 @@ module "sensor" {
 | <a name="input_sensor_admin_username"></a> [sensor\_admin\_username](#input\_sensor\_admin\_username) | The name of the admin user on the corelight sensor VM in the VMSS | `string` | `"corelight"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Any tags that should be applied to resources deployed by the module | `map(string)` | `{}` | no |
 | <a name="input_virtual_machine_os_disk_size"></a> [virtual\_machine\_os\_disk\_size](#input\_virtual\_machine\_os\_disk\_size) | The amount of OS disk to attach to the VMSS instances | `number` | `500` | no |
-| <a name="input_virtual_machine_size"></a> [virtual\_machine\_size](#input\_virtual\_machine\_size) | The VMSS VM size | `string` | `"Standard_D4s_v3"` | no |
+| <a name="input_virtual_machine_size"></a> [virtual\_machine\_size](#input\_virtual\_machine\_size) | The VMSS VM size | `string` | `"Standard_D8s_v7"` | no |
 
 ## Outputs
 
