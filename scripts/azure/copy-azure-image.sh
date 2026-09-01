@@ -4,7 +4,9 @@
 #
 # This script copies a blob from a source Azure storage account (using SAS URL)
 # to a destination storage account, with automatic resource creation if needed.
-# After copying, it automatically creates a managed image from the VHD blob.
+# After copying, it publishes the VHD directly as an Azure Compute Gallery image
+# version. The gallery definition advertises NVMe support for Generation 2
+# images so NVMe-only VM sizes such as Dlsv7 can deploy them.
 #
 # Quick usage - curl and run directly from GitHub:
 # curl -s https://raw.githubusercontent.com/corelight/terraform/refs/heads/main/scripts/azure/copy-azure-image.sh | bash -s -- --source-sas "https://sourceaccount.blob.core.windows.net/container/file.vhd?sp=r&st=..."
@@ -25,7 +27,7 @@ usage() {
     cat << EOF
 Usage: $0 [OPTIONS]
 
-Copy a blob from source to destination Azure storage account using azcopy and create a managed image.
+Copy a blob from source to destination Azure storage account using azcopy and publish an Azure Compute Gallery image version.
 The blob name will be automatically extracted from the source SAS URL.
 
 OPTIONS:
@@ -51,6 +53,7 @@ DESTINATION_ACCOUNT_NAME=""
 DESTINATION_CONTAINER_NAME=""
 DESTINATION_RESOURCE_GROUP=""
 DESTINATION_LOCATION="East US"
+GALLERY_NAME="corelightSensorGallery"
 
 
 # Blob name will be extracted from SAS URL
@@ -254,13 +257,11 @@ create_container() {
 
 # Function to generate unique resource group name
 generate_resource_group_name() {
-    local prefix="corelightimages"
     echo "corelightimages-$(create_random_id)"
 }
 
 # Function to generate unique storage account name
 generate_storage_account_name() {
-    local prefix="corelightimages"
     echo "corelightimages$(create_random_id)"
 }
 
@@ -271,7 +272,8 @@ generate_sas_url() {
     local blob_name="$3"
     local expiry="$4"
 
-    local sas_url=$(az storage blob generate-sas \
+    local sas_url
+    sas_url=$(az storage blob generate-sas \
         --account-name "$account_name" \
         --container-name "$container_name" \
         --name "$blob_name" \
@@ -283,60 +285,113 @@ generate_sas_url() {
     echo "${sas_url//\"/}"
 }
 
-# Function to check if managed image already exists
-check_image_exists() {
-    local image_name="$1"
-    local resource_group="$2"
-
-    echo "Checking if managed image '$image_name' exists in resource group '$resource_group'..."
-    if az image show --name "$image_name" --resource-group "$resource_group" &>/dev/null; then
-        echo "Managed image '$image_name' already exists."
-        return 0
-    else
-        echo "Managed image '$image_name' does not exist."
-        return 1
-    fi
-}
-
-# Function to create managed image from VHD blob
-create_managed_image() {
-    local image_name="$1"
-    local resource_group="$2"
-    local location="$3"
-    local storage_account="$4"
-    local container_name="$5"
-    local blob_name="$6"
-    local hyperv_generation="$7"
-
-    # Construct the VHD blob URI
+# Publish the copied VHD directly as an Azure Compute Gallery image version.
+publish_gallery_image_version() {
+    local resource_group="$1"
+    local location="$2"
+    local hyperv_generation="$3"
+    local gallery_name="$4"
+    local image_definition="$5"
+    local image_version="$6"
+    local storage_account="$7"
+    local container_name="$8"
+    local blob_name="$9"
     local vhd_uri="https://${storage_account}.blob.core.windows.net/${container_name}/${blob_name}"
 
-    echo "Creating managed image '$image_name' from VHD blob..."
-    echo "VHD URI: $vhd_uri"
-    echo "Hyper-V Generation: $hyperv_generation"
-
-    az image create \
-        --name "$image_name" \
-        --resource-group "$resource_group" \
-        --location "$location" \
-        --hyper-v-generation "$hyperv_generation" \
-        --source "$vhd_uri" \
-        --os-type Linux
-
-    if [[ $? -eq 0 ]]; then
-        echo "Successfully created managed image '$image_name'."
-    else
-        echo "Failed to create managed image '$image_name'."
-        return 1
+    if ! az sig show --resource-group "$resource_group" --gallery-name "$gallery_name" &>/dev/null; then
+        echo "Creating Azure Compute Gallery '$gallery_name'..." >&2
+        az sig create \
+            --resource-group "$resource_group" \
+            --gallery-name "$gallery_name" \
+            --location "$location" >&2
     fi
-}
 
-# Function to generate image name from blob name
-generate_image_name() {
-    local blob_name="$1"
-    # Remove .vhd extension
-    local base_name="${blob_name%.vhd}"
-    echo "$base_name"
+    if ! az sig image-definition show \
+        --resource-group "$resource_group" \
+        --gallery-name "$gallery_name" \
+        --gallery-image-definition "$image_definition" &>/dev/null; then
+        echo "Creating gallery image definition '$image_definition'..." >&2
+
+        local disk_controller_types="SCSI"
+        if [[ "$hyperv_generation" == "V2" ]]; then
+            disk_controller_types="SCSI,NVMe"
+        fi
+
+        az sig image-definition create \
+            --resource-group "$resource_group" \
+            --gallery-name "$gallery_name" \
+            --gallery-image-definition "$image_definition" \
+            --publisher Corelight \
+            --offer Sensor \
+            --sku SoftwareSensor \
+            --os-type Linux \
+            --os-state Generalized \
+            --hyper-v-generation "$hyperv_generation" \
+            --features "DiskControllerTypes=$disk_controller_types" >&2
+    else
+        local existing_generation
+        existing_generation=$(az sig image-definition show \
+            --resource-group "$resource_group" \
+            --gallery-name "$gallery_name" \
+            --gallery-image-definition "$image_definition" \
+            --query hyperVGeneration -o tsv)
+
+        if [[ "$existing_generation" != "$hyperv_generation" ]]; then
+            echo "Error: Gallery image definition '$image_definition' uses Hyper-V generation '$existing_generation', expected '$hyperv_generation'." >&2
+            return 1
+        fi
+
+        if [[ "$hyperv_generation" == "V2" ]]; then
+            local disk_controller_types
+            disk_controller_types=$(az sig image-definition show \
+                --resource-group "$resource_group" \
+                --gallery-name "$gallery_name" \
+                --gallery-image-definition "$image_definition" \
+                --query "features[?name=='DiskControllerTypes'].value | [0]" -o tsv)
+
+            if [[ "$disk_controller_types" != *NVMe* ]]; then
+                echo "Error: Gallery image definition '$image_definition' does not advertise NVMe support." >&2
+                return 1
+            fi
+        fi
+    fi
+
+    if az sig image-version show \
+        --resource-group "$resource_group" \
+        --gallery-name "$gallery_name" \
+        --gallery-image-definition "$image_definition" \
+        --gallery-image-version "$image_version" &>/dev/null; then
+        local provisioning_state
+        provisioning_state=$(az sig image-version show \
+            --resource-group "$resource_group" \
+            --gallery-name "$gallery_name" \
+            --gallery-image-definition "$image_definition" \
+            --gallery-image-version "$image_version" \
+            --query provisioningState -o tsv)
+
+        if [[ "$provisioning_state" != "Succeeded" ]]; then
+            echo "Error: Gallery image version '$image_version' is in state '$provisioning_state'." >&2
+            return 1
+        fi
+
+        echo "Gallery image version '$image_version' already exists and is ready." >&2
+    else
+        echo "Creating gallery image version '$image_version'..." >&2
+        az sig image-version create \
+            --resource-group "$resource_group" \
+            --gallery-name "$gallery_name" \
+            --gallery-image-definition "$image_definition" \
+            --gallery-image-version "$image_version" \
+            --os-vhd-uri "$vhd_uri" \
+            --os-vhd-storage-account "$storage_account" >&2
+    fi
+
+    az sig image-version show \
+        --resource-group "$resource_group" \
+        --gallery-name "$gallery_name" \
+        --gallery-image-definition "$image_definition" \
+        --gallery-image-version "$image_version" \
+        --query id -o tsv
 }
 
 # Auto-create resources if needed
@@ -396,7 +451,7 @@ echo "Generating destination SAS URL..."
 DESTINATION_SAS=$(generate_sas_url "$DESTINATION_ACCOUNT_NAME" "$DESTINATION_CONTAINER_NAME" "$BLOB_NAME" "$EXPIRY_DATE")
 
 echo "Copying blob from source to destination..."
-echo "Source SAS: $SOURCE_SAS"
+echo "Source blob: $BLOB_NAME"
 echo "Destination: $DESTINATION_ACCOUNT_NAME/$DESTINATION_CONTAINER_NAME/$BLOB_NAME"
 
 azcopy cp "$SOURCE_SAS" "$DESTINATION_SAS"
@@ -409,9 +464,9 @@ if [[ "$AUTO_CREATE_RESOURCES" == "true" ]]; then
     echo "  Container: $DESTINATION_CONTAINER_NAME"
 fi
 
-# Create managed image
+# Create Gallery image version
 echo ""
-echo "Processing managed image creation..."
+echo "Processing Azure Compute Gallery image creation..."
 
 # Extract version from source SAS URL
 VERSION=$(extract_version_from_url "$SOURCE_SAS")
@@ -428,29 +483,43 @@ if [[ -n "$VERSION" ]]; then
         echo "Version $VERSION is 28.4.0 or greater, using Hyper-V Generation V2"
     fi
 else
-    # Default to V2 if version cannot be detected
-    HYPERV_GENERATION="V2"
-    echo "Warning: Could not extract version from URL, defaulting to Hyper-V Generation V2"
+    echo "Error: Could not extract the sensor version from the source SAS URL."
+    echo "Expected the VHD name to contain a version such as v29.1.5."
+    exit 1
 fi
 
-# Generate image name from blob name (without .vhd extension)
-IMAGE_NAME=$(generate_image_name "$BLOB_NAME")
-echo "Using image name: $IMAGE_NAME"
-
-# Check if image already exists
-if check_image_exists "$IMAGE_NAME" "$DESTINATION_RESOURCE_GROUP"; then
-    echo "Managed image '$IMAGE_NAME' already exists. Skipping image creation."
+GALLERY_IMAGE_VERSION="$VERSION"
+if [[ "$HYPERV_GENERATION" == "V2" ]]; then
+    GALLERY_IMAGE_DEFINITION="corelightSensorGen2"
 else
-    # Create the managed image
-    echo "Creating managed image from VHD blob..."
-    if create_managed_image "$IMAGE_NAME" "$DESTINATION_RESOURCE_GROUP" "$DESTINATION_LOCATION" "$DESTINATION_ACCOUNT_NAME" "$DESTINATION_CONTAINER_NAME" "$BLOB_NAME" "$HYPERV_GENERATION"; then
-        echo "Managed image creation completed successfully!"
-        echo "  Image Name: $IMAGE_NAME"
-        echo "  Resource Group: $DESTINATION_RESOURCE_GROUP"
-        echo "  Location: $DESTINATION_LOCATION"
-        echo "  Hyper-V Generation: $HYPERV_GENERATION"
-    else
-        echo "Failed to create managed image. Please check Azure CLI output for details."
-        exit 1
-    fi
+    GALLERY_IMAGE_DEFINITION="corelightSensorGen1"
+fi
+
+if GALLERY_IMAGE_VERSION_ID=$(publish_gallery_image_version \
+    "$DESTINATION_RESOURCE_GROUP" \
+    "$DESTINATION_LOCATION" \
+    "$HYPERV_GENERATION" \
+    "$GALLERY_NAME" \
+    "$GALLERY_IMAGE_DEFINITION" \
+    "$GALLERY_IMAGE_VERSION" \
+    "$DESTINATION_ACCOUNT_NAME" \
+    "$DESTINATION_CONTAINER_NAME" \
+    "$BLOB_NAME"); then
+    echo "Gallery image publication completed successfully!"
+    echo "  Gallery: $GALLERY_NAME"
+    echo "  Image Definition: $GALLERY_IMAGE_DEFINITION"
+    echo "  Image Version: $GALLERY_IMAGE_VERSION"
+    echo "  Terraform source_image_id: $GALLERY_IMAGE_VERSION_ID"
+else
+    echo "Failed to publish Azure Compute Gallery image version."
+    exit 1
+fi
+
+echo "Deleting staging VHD '$BLOB_NAME'..."
+if ! az storage blob delete \
+    --account-name "$DESTINATION_ACCOUNT_NAME" \
+    --container-name "$DESTINATION_CONTAINER_NAME" \
+    --name "$BLOB_NAME" \
+    --only-show-errors; then
+    echo "Warning: Gallery image is ready, but the staging VHD could not be deleted."
 fi
