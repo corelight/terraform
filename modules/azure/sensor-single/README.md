@@ -98,7 +98,7 @@ module "sensor" {
 | <a name="input_ssh_allow_cidrs"></a> [ssh\_allow\_cidrs](#input\_ssh\_allow\_cidrs) | List of CIDRs to grant SSH (port 22) access to the management NIC | `list(string)` | `[]` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all resources deployed by this module | `map(string)` | `{}` | no |
 | <a name="input_user_assigned_identity_ids"></a> [user\_assigned\_identity\_ids](#input\_user\_assigned\_identity\_ids) | List of user-assigned managed identity IDs to attach to the VM (e.g. for VNet flow log access) | `list(string)` | `[]` | no |
-| <a name="input_virtual_machine_size"></a> [virtual\_machine\_size](#input\_virtual\_machine\_size) | The Azure VM size for the sensor | `string` | `"Standard_D4s_v3"` | no |
+| <a name="input_virtual_machine_size"></a> [virtual\_machine\_size](#input\_virtual\_machine\_size) | The Azure VM size for the sensor | `string` | `"Standard_D8s_v7"` | no |
 
 ## Outputs
 
