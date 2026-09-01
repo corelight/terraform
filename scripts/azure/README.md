@@ -57,4 +57,6 @@ The script automatically detects the sensor version from the SAS URL and selects
 
 If the version cannot be detected, the script exits with an error.
 
-The script uses fixed Gallery definitions: `corelightSensorGen1` for V1 and `corelightSensorGen2` for V2. Generation 2 definitions are created with `DiskControllerTypes=SCSI,NVMe`. Use the Gallery image version ID printed by the script as the Terraform `corelight_sensor_image_id` value.
+The script preserves the complete VHD name, including prerelease suffixes, as the Gallery image definition name and creates version `1.0.0` beneath it. For example, `corelight-sensor-v29.2.0-rc30.vhd` becomes definition `corelight-sensor-v29.2.0-rc30`, while the GA image becomes `corelight-sensor-v29.2.0`. Generation 2 definitions are created with `DiskControllerTypes=SCSI,NVMe`.
+
+Use the Gallery image version ID printed by the script as the Terraform `corelight_sensor_image_id` value.

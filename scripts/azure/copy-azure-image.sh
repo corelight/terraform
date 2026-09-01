@@ -394,6 +394,12 @@ publish_gallery_image_version() {
         --query id -o tsv
 }
 
+# Preserve the existing image identity, including prerelease suffixes.
+generate_image_name() {
+    local blob_name="$1"
+    echo "${blob_name%.vhd}"
+}
+
 # Auto-create resources if needed
 # When AUTO_CREATE_RESOURCES=true, this creates:
 # - Resource Group (if not provided)
@@ -488,12 +494,8 @@ else
     exit 1
 fi
 
-GALLERY_IMAGE_VERSION="$VERSION"
-if [[ "$HYPERV_GENERATION" == "V2" ]]; then
-    GALLERY_IMAGE_DEFINITION="corelightSensorGen2"
-else
-    GALLERY_IMAGE_DEFINITION="corelightSensorGen1"
-fi
+GALLERY_IMAGE_DEFINITION=$(generate_image_name "$BLOB_NAME")
+GALLERY_IMAGE_VERSION="1.0.0"
 
 if GALLERY_IMAGE_VERSION_ID=$(publish_gallery_image_version \
     "$DESTINATION_RESOURCE_GROUP" \
