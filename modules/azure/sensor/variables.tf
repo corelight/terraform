@@ -102,7 +102,7 @@ variable "scale_set_name" {
 variable "virtual_machine_size" {
   description = "The VMSS VM size"
   type        = string
-  default     = "Standard_D4s_v3"
+  default     = "Standard_D8s_v7"
 }
 
 variable "virtual_machine_os_disk_size" {

@@ -79,7 +79,7 @@ variable "deployment_name" {
 variable "virtual_machine_size" {
   description = "Azure VM size for sensor instances"
   type        = string
-  default     = "Standard_D4s_v3"
+  default     = "Standard_D8s_v7"
 }
 
 variable "virtual_machine_os_disk_size" {
