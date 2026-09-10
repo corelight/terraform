@@ -111,3 +111,41 @@ variable "fedramp_mode_enabled" {
   default     = false
   description = "(optional) enable Fedramp mode"
 }
+
+variable "deployment_cloud_provider" {
+  type        = string
+  default     = null
+  description = "Cloud provider recorded as deployment metadata"
+
+  validation {
+    condition = (
+      var.deployment_cloud_provider == null ||
+      contains(["aws", "azure", "gcp"], var.deployment_cloud_provider)
+    )
+    error_message = "deployment_cloud_provider must be aws, azure, gcp, or null."
+  }
+}
+
+variable "deployment_cloud_region" {
+  type        = string
+  default     = null
+  description = "Cloud region recorded as deployment metadata"
+
+  validation {
+    condition = (
+      var.deployment_cloud_region == null ||
+      (
+        length(trimspace(var.deployment_cloud_region)) > 0 &&
+        length(var.deployment_cloud_region) <= 255 &&
+        !can(regex("[[:cntrl:]]", var.deployment_cloud_region))
+      )
+    )
+    error_message = "deployment_cloud_region must be 1-255 characters without control characters, or null."
+  }
+}
+
+variable "deployment_traffic_mirroring_enabled" {
+  type        = bool
+  default     = null
+  description = "Whether this Terraform path explicitly enabled traffic mirroring"
+}

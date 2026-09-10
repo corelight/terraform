@@ -109,3 +109,122 @@ run "verify_output_exists" {
     error_message = "Module should output the cloudinit_config"
   }
 }
+
+run "verify_deployment_metadata" {
+  command = plan
+
+  variables {
+    sensor_license                       = "test-license-key"
+    fleet_community_string               = "test-community"
+    sensor_management_interface_name     = "eth1"
+    sensor_monitoring_interface_name     = "eth0"
+    deployment_cloud_provider            = "aws"
+    deployment_cloud_region              = "us-east-1"
+    deployment_traffic_mirroring_enabled = true
+  }
+
+  assert {
+    condition = strcontains(
+      data.cloudinit_config.config.part[0].content,
+      "path: /etc/corelight/deployment-metadata.yaml",
+    )
+    error_message = "Cloud-init should persist deployment metadata"
+  }
+
+  assert {
+    condition     = strcontains(local.deployment_metadata_yaml, "deployment_metadata.cloud_provider")
+    error_message = "Metadata should contain provider"
+  }
+
+  assert {
+    condition     = strcontains(local.deployment_metadata_yaml, "deployment_metadata.cloud_region")
+    error_message = "Metadata should contain region"
+  }
+
+  assert {
+    condition     = strcontains(local.deployment_metadata_yaml, "deployment_metadata.cloud_traffic_mirroring_enabled")
+    error_message = "Known mirroring state should be rendered"
+  }
+
+  assert {
+    condition = strcontains(
+      data.cloudinit_config.config.part[0].content,
+      "corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml",
+    )
+    error_message = "Cloud-init should apply metadata through the existing configuration command"
+  }
+}
+
+run "verify_unknown_mirroring_is_omitted" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+    deployment_cloud_provider        = "azure"
+    deployment_cloud_region          = "eastus"
+  }
+
+  assert {
+    condition     = !strcontains(local.deployment_metadata_yaml, "traffic_mirroring")
+    error_message = "Unknown mirroring state should be omitted"
+  }
+}
+
+run "reject_invalid_deployment_provider" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+    deployment_cloud_provider        = "openstack"
+    deployment_cloud_region          = "region-one"
+  }
+
+  expect_failures = [var.deployment_cloud_provider]
+}
+
+run "verify_false_mirroring" {
+  command = plan
+
+  variables {
+    sensor_license                       = "test-license-key"
+    fleet_community_string               = "test-community"
+    sensor_management_interface_name     = "eth1"
+    sensor_monitoring_interface_name     = "eth0"
+    deployment_cloud_provider            = "azure"
+    deployment_cloud_region              = "eastus"
+    deployment_traffic_mirroring_enabled = false
+  }
+
+  assert {
+    condition = strcontains(
+      local.deployment_metadata_yaml,
+      "deployment_metadata.cloud_traffic_mirroring_enabled",
+    ) && strcontains(local.deployment_metadata_yaml, "false")
+    error_message = "Explicit false mirroring state should be retained"
+  }
+}
+
+run "verify_absent_deployment_metadata" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+  }
+
+  assert {
+    condition = !strcontains(
+      data.cloudinit_config.config.part[0].content,
+      "/etc/corelight/deployment-metadata.yaml",
+    )
+    error_message = "Direct callers without metadata should retain the old cloud-init"
+  }
+}
