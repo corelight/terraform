@@ -60,6 +60,9 @@ module "config" {
   count  = var.custom_sensor_user_data == "" ? 1 : 0
   source = "../../_shared/config/sensor"
 
+  deployment_cloud_provider = "aws"
+  deployment_cloud_region   = data.aws_region.current.name
+
   fleet_community_string = var.community_string
   sensor_license         = var.license_key_file_path != "" ? file(var.license_key_file_path) : ""
 

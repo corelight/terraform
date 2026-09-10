@@ -1,6 +1,9 @@
 module "sensor_config" {
   source = "../../_shared/config/sensor"
 
+  deployment_cloud_provider = "aws"
+  deployment_cloud_region   = data.aws_region.current.name
+
   sensor_license                   = var.license_key_file_path != "" ? file(var.license_key_file_path) : ""
   fleet_community_string           = var.community_string
   fleet_token                      = var.fleet_token

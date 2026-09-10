@@ -2,6 +2,12 @@
 # These tests validate the module directly
 
 mock_provider "aws" {
+  mock_data "aws_region" {
+    defaults = {
+      name = "us-east-1"
+    }
+  }
+
   mock_data "aws_subnet" {
     defaults = {
       arn               = "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-mock"
@@ -41,7 +47,41 @@ run "test_minimal_configuration" {
     management_security_group_vpc_id = "vpc-test123456"
   }
 
-  # Validates minimal required configuration works
+  assert {
+    condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.config[0].cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_provider"] == "aws",
+      false,
+    )
+    error_message = "Provider module should pass deployment metadata to shared cloud-init"
+  }
+
+  assert {
+    condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.config[0].cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_region"] == "us-east-1",
+      false,
+    )
+    error_message = "Provider module should pass the active AWS region to shared cloud-init"
+  }
+}
+
+run "test_custom_sensor_user_data_bypasses_generated_metadata" {
+  command = plan
+
+  variables {
+    ami_id                           = "ami-test123456"
+    community_string                 = "test-community"
+    aws_key_pair_name                = "test-keypair"
+    monitoring_interface_subnet_id   = "subnet-mon123456"
+    monitoring_security_group_vpc_id = "vpc-test123456"
+    management_interface_subnet_id   = "subnet-mgmt123456"
+    management_security_group_vpc_id = "vpc-test123456"
+    custom_sensor_user_data          = "#cloud-config\nruncmd: []"
+  }
+
+  assert {
+    condition     = length(module.config) == 0
+    error_message = "Custom sensor user data should bypass generated deployment metadata"
+  }
 }
 
 run "test_with_fleet_configuration" {

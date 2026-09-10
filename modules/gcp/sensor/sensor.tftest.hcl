@@ -44,6 +44,30 @@ run "verify_required_variables" {
     condition     = google_compute_region_health_check.traffic_mon_health_check.name == "corelight-traffic-monitor-health-check"
     error_message = "Health check name should default to 'corelight-traffic-monitor-health-check'"
   }
+
+  assert {
+    condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_provider"] == "gcp",
+      false,
+    )
+    error_message = "Provider module should pass deployment metadata to shared cloud-init"
+  }
+
+  assert {
+    condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_region"] == "us-west1",
+      false,
+    )
+    error_message = "Provider module should pass the GCP region to shared cloud-init"
+  }
+
+  assert {
+    condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_traffic_mirroring_enabled"] == "true",
+      false,
+    )
+    error_message = "GCP provider module should pass known packet-mirroring metadata"
+  }
 }
 
 run "verify_custom_names" {
