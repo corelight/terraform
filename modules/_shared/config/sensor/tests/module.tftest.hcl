@@ -244,6 +244,21 @@ run "reject_multibyte_deployment_region_over_255_bytes" {
   expect_failures = [var.deployment_cloud_region]
 }
 
+run "reject_unicode_control_deployment_region" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+    deployment_cloud_provider        = "aws"
+    deployment_cloud_region          = "us\u0085east"
+  }
+
+  expect_failures = [var.deployment_cloud_region]
+}
+
 run "verify_metadata_application_follows_successful_deploy" {
   command = plan
 

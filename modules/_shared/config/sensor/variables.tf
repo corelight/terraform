@@ -137,10 +137,10 @@ variable "deployment_cloud_region" {
       (
         length(trimspace(var.deployment_cloud_region)) > 0 &&
         length(base64encode(trimspace(var.deployment_cloud_region))) <= 340 &&
-        !can(regex("[[:cntrl:]]", var.deployment_cloud_region))
+        !can(regex("\\p{Cc}", var.deployment_cloud_region))
       )
     )
-    error_message = "deployment_cloud_region must be 1-255 characters without control characters, or null."
+    error_message = "deployment_cloud_region must be 1-255 UTF-8 bytes without control characters, or null."
   }
 }
 
