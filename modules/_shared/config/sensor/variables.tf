@@ -136,7 +136,7 @@ variable "deployment_cloud_region" {
       var.deployment_cloud_region == null ||
       (
         length(trimspace(var.deployment_cloud_region)) > 0 &&
-        length(var.deployment_cloud_region) <= 255 &&
+        length(base64encode(trimspace(var.deployment_cloud_region))) <= 340 &&
         !can(regex("[[:cntrl:]]", var.deployment_cloud_region))
       )
     )

@@ -228,3 +228,39 @@ run "verify_absent_deployment_metadata" {
     error_message = "Direct callers without metadata should retain the old cloud-init"
   }
 }
+
+run "reject_multibyte_deployment_region_over_255_bytes" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+    deployment_cloud_provider        = "gcp"
+    deployment_cloud_region          = join("", [for i in range(128) : "é"])
+  }
+
+  expect_failures = [var.deployment_cloud_region]
+}
+
+run "verify_metadata_application_follows_successful_deploy" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+    deployment_cloud_provider        = "aws"
+    deployment_cloud_region          = "us-east-1"
+  }
+
+  assert {
+    condition = strcontains(
+      data.cloudinit_config.config.part[0].content,
+      "    if ! corelightctl sensor deploy -v; then\n      exit 1\n    fi\n    if ! corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml; then\n      logger -t corelight-deployment-metadata \"Sensor API did not accept deployment metadata; inventory fields will remain null\"\n    fi",
+    )
+    error_message = "Metadata application should follow a successful deploy and remain best-effort"
+  }
+}

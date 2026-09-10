@@ -63,12 +63,16 @@ write_files:
 %{ endif ~}
 
 runcmd:
-  - corelightctl sensor deploy -v
 %{ if deployment_metadata != "" ~}
   - |
+    if ! corelightctl sensor deploy -v; then
+      exit 1
+    fi
     if ! corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml; then
       logger -t corelight-deployment-metadata "Sensor API did not accept deployment metadata; inventory fields will remain null"
     fi
+%{ else ~}
+  - corelightctl sensor deploy -v
 %{ endif ~}
 %{ if azure_fips_enabled ~}
   - |
