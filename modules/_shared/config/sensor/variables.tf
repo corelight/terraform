@@ -118,9 +118,8 @@ variable "deployment_cloud_provider" {
   description = "Cloud provider recorded as deployment metadata"
 
   validation {
-    condition = (
-      var.deployment_cloud_provider == null ||
-      contains(["aws", "azure", "gcp"], var.deployment_cloud_provider)
+    condition = var.deployment_cloud_provider == null ? true : contains(
+      ["aws", "azure", "gcp"], var.deployment_cloud_provider
     )
     error_message = "deployment_cloud_provider must be aws, azure, gcp, or null."
   }
@@ -132,13 +131,10 @@ variable "deployment_cloud_region" {
   description = "Cloud region recorded as deployment metadata"
 
   validation {
-    condition = (
-      var.deployment_cloud_region == null ||
-      (
-        length(trimspace(var.deployment_cloud_region)) > 0 &&
-        length(base64encode(trimspace(var.deployment_cloud_region))) <= 340 &&
-        !can(regex("\\p{Cc}", var.deployment_cloud_region))
-      )
+    condition = var.deployment_cloud_region == null ? true : (
+      length(trimspace(var.deployment_cloud_region)) > 0 &&
+      length(base64encode(trimspace(var.deployment_cloud_region))) <= 340 &&
+      !can(regex("\\p{Cc}", var.deployment_cloud_region))
     )
     error_message = "deployment_cloud_region must be 1-255 UTF-8 bytes without control characters, or null."
   }

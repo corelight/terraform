@@ -60,6 +60,9 @@ The project is licensed under the MIT license.
 | <a name="input_sensor_monitoring_interface_name"></a> [sensor\_monitoring\_interface\_name](#input\_sensor\_monitoring\_interface\_name) | the sensor(s) monitoring interface name | `string` | n/a | yes |
 | <a name="input_azure_fips_enabled"></a> [azure\_fips\_enabled](#input\_azure\_fips\_enabled) | (optional) enable FIPS mode on Azure instances | `bool` | `false` | no |
 | <a name="input_base64_encode_config"></a> [base64\_encode\_config](#input\_base64\_encode\_config) | should the configuration be base64 encoded | `bool` | `false` | no |
+| <a name="input_deployment_cloud_provider"></a> [deployment\_cloud\_provider](#input\_deployment\_cloud\_provider) | Cloud provider recorded as deployment metadata | `string` | `null` | no |
+| <a name="input_deployment_cloud_region"></a> [deployment\_cloud\_region](#input\_deployment\_cloud\_region) | Cloud region recorded as deployment metadata | `string` | `null` | no |
+| <a name="input_deployment_traffic_mirroring_enabled"></a> [deployment\_traffic\_mirroring\_enabled](#input\_deployment\_traffic\_mirroring\_enabled) | Whether this Terraform path explicitly enabled traffic mirroring | `bool` | `null` | no |
 | <a name="input_fedramp_mode_enabled"></a> [fedramp\_mode\_enabled](#input\_fedramp\_mode\_enabled) | (optional) enable Fedramp mode | `bool` | `false` | no |
 | <a name="input_fleet_http_proxy"></a> [fleet\_http\_proxy](#input\_fleet\_http\_proxy) | (optional) the proxy URL for HTTP traffic from the fleet | `string` | `""` | no |
 | <a name="input_fleet_https_proxy"></a> [fleet\_https\_proxy](#input\_fleet\_https\_proxy) | (optional) the proxy URL for HTTPS traffic from the fleet | `string` | `""` | no |
