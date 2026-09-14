@@ -1,4 +1,14 @@
 locals {
+  terraform_module_version_raw = var.terraform_module_version != null ? var.terraform_module_version : try(
+    chomp(file("${path.module}/../../../../RELEASE_VERSION")),
+    null,
+  )
+  terraform_module_version = local.terraform_module_version_raw == null ? null : (
+    length(local.terraform_module_version_raw) <= 64 && can(regex(
+      "^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)-[1-9][0-9]*$",
+      local.terraform_module_version_raw,
+    )) ? local.terraform_module_version_raw : null
+  )
   deployment_metadata = (
     var.deployment_cloud_provider == null || var.deployment_cloud_region == null
     ? null
@@ -9,6 +19,9 @@ locals {
       },
       var.deployment_traffic_mirroring_enabled == null ? {} : {
         "deployment_metadata.cloud_traffic_mirroring_enabled" = tostring(var.deployment_traffic_mirroring_enabled)
+      },
+      local.terraform_module_version == null ? {} : {
+        "deployment_metadata.terraform_module_version" = local.terraform_module_version
       },
     )
   )

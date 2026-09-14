@@ -29,12 +29,17 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Stamp Terraform module version
+        env:
+          NEXT_TAG: ${{ steps.compute.outputs.next_tag }}
+        run: scripts/release/stamp-release-version.sh "$NEXT_TAG"
+
       - name: Create and push tag
         env:
           NEXT_TAG: ${{ steps.compute.outputs.next_tag }}
         run: |
           git tag "$NEXT_TAG"
-          git push origin "$NEXT_TAG"
+          git push origin "refs/tags/$NEXT_TAG"
 
       - name: Create GitHub Release
         env:

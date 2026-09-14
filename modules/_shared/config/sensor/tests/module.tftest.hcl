@@ -121,6 +121,7 @@ run "verify_deployment_metadata" {
     deployment_cloud_provider            = "aws"
     deployment_cloud_region              = "us-east-1"
     deployment_traffic_mirroring_enabled = true
+    terraform_module_version             = "v29.0.5-7"
   }
 
   assert {
@@ -147,6 +148,14 @@ run "verify_deployment_metadata" {
   }
 
   assert {
+    condition = try(
+      yamldecode(local.deployment_metadata_yaml)["deployment_metadata.terraform_module_version"] == "v29.0.5-7",
+      false,
+    )
+    error_message = "Metadata should contain the published Terraform module version"
+  }
+
+  assert {
     condition = strcontains(
       data.cloudinit_config.config.part[0].content,
       "corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml",
@@ -170,6 +179,49 @@ run "verify_unknown_mirroring_is_omitted" {
   assert {
     condition     = !strcontains(local.deployment_metadata_yaml, "traffic_mirroring")
     error_message = "Unknown mirroring state should be omitted"
+  }
+
+  assert {
+    condition     = !strcontains(local.deployment_metadata_yaml, "terraform_module_version")
+    error_message = "Missing Terraform module version should be omitted"
+  }
+}
+
+run "verify_malformed_terraform_module_version_is_omitted" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+    deployment_cloud_provider        = "gcp"
+    deployment_cloud_region          = "us-central1"
+    terraform_module_version         = "v29.0.5-07"
+  }
+
+  assert {
+    condition     = !strcontains(local.deployment_metadata_yaml, "terraform_module_version")
+    error_message = "Malformed Terraform module version should be omitted"
+  }
+}
+
+run "verify_overlong_terraform_module_version_is_omitted" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+    deployment_cloud_provider        = "gcp"
+    deployment_cloud_region          = "us-central1"
+    terraform_module_version         = "v1234567890123456789012345678901234567890123456789012345678.0.0-1"
+  }
+
+  assert {
+    condition     = !strcontains(local.deployment_metadata_yaml, "terraform_module_version")
+    error_message = "Overlong Terraform module version should be omitted"
   }
 }
 

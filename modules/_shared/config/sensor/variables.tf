@@ -145,3 +145,9 @@ variable "deployment_traffic_mirroring_enabled" {
   default     = null
   description = "Whether this Terraform path explicitly enabled traffic mirroring"
 }
+
+variable "terraform_module_version" {
+  type        = string
+  default     = null
+  description = "Published Corelight Terraform module release version"
+}
