@@ -3,6 +3,7 @@ module "sensor_config" {
 
   deployment_cloud_provider = "azure"
   deployment_cloud_region   = var.location
+  terraform_module          = "azure/sensor"
 
   fleet_community_string                       = var.community_string
   fleet_token                                  = var.fleet_token

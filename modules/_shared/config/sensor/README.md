@@ -48,7 +48,7 @@ The project is licensed under the MIT license.
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >= 2.3.0 |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | 2.4.1 |
 
 ## Inputs
 
@@ -76,6 +76,7 @@ The project is licensed under the MIT license.
 | <a name="input_sensor_health_check_probe_source_ranges_cidr"></a> [sensor\_health\_check\_probe\_source\_ranges\_cidr](#input\_sensor\_health\_check\_probe\_source\_ranges\_cidr) | (optional) the health check probe ranges | `list(string)` | <pre>[<br/>  ""<br/>]</pre> | no |
 | <a name="input_subnetwork_monitoring_cidr"></a> [subnetwork\_monitoring\_cidr](#input\_subnetwork\_monitoring\_cidr) | (optional) the monitoring subnet for the sensor(s), leaving this empty will result in no sensor.monitoring\_interface.health\_check section being rendered into user data | `string` | `""` | no |
 | <a name="input_subnetwork_monitoring_gateway"></a> [subnetwork\_monitoring\_gateway](#input\_subnetwork\_monitoring\_gateway) | (optional) the monitoring subnet's gateway address, leaving this empty will result in no sensor.monitoring\_interface.health\_check section being rendered into user data | `string` | `""` | no |
+| <a name="input_terraform_module"></a> [terraform\_module](#input\_terraform\_module) | Canonical Corelight Terraform module identity | `string` | `null` | no |
 | <a name="input_terraform_module_version"></a> [terraform\_module\_version](#input\_terraform\_module\_version) | Published Corelight Terraform module release version | `string` | `null` | no |
 
 ## Outputs

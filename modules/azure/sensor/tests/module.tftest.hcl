@@ -43,6 +43,14 @@ run "test_minimal_configuration" {
 
   assert {
     condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.terraform_module"] == "azure/sensor",
+      false,
+    )
+    error_message = "Provider module should pass its Terraform module identity"
+  }
+
+  assert {
+    condition = try(
       yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_region"] == "eastus",
       false,
     )

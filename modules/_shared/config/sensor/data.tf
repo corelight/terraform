@@ -23,6 +23,9 @@ locals {
       local.terraform_module_version == null ? {} : {
         "deployment_metadata.terraform_module_version" = local.terraform_module_version
       },
+      var.terraform_module == null ? {} : {
+        "deployment_metadata.terraform_module" = var.terraform_module
+      },
     )
   )
   deployment_metadata_yaml = local.deployment_metadata == null ? "" : yamlencode(local.deployment_metadata)

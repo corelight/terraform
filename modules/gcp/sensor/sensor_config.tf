@@ -4,6 +4,7 @@ module "sensor_config" {
   deployment_cloud_provider            = "gcp"
   deployment_cloud_region              = var.region
   deployment_traffic_mirroring_enabled = true
+  terraform_module                     = "gcp/sensor"
 
   fleet_community_string = var.community_string
   fleet_token            = var.fleet_token

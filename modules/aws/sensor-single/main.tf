@@ -62,6 +62,7 @@ module "config" {
 
   deployment_cloud_provider = "aws"
   deployment_cloud_region   = data.aws_region.current.name
+  terraform_module          = "aws/sensor-single"
 
   fleet_community_string = var.community_string
   sensor_license         = var.license_key_file_path != "" ? file(var.license_key_file_path) : ""

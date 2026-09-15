@@ -151,3 +151,16 @@ variable "terraform_module_version" {
   default     = null
   description = "Published Corelight Terraform module release version"
 }
+
+variable "terraform_module" {
+  type        = string
+  default     = null
+  description = "Canonical Corelight Terraform module identity"
+
+  validation {
+    condition = var.terraform_module == null ? true : contains(
+      ["aws/sensor", "aws/sensor-single", "azure/sensor", "azure/sensor-single", "gcp/sensor"], var.terraform_module
+    )
+    error_message = "terraform_module must be aws/sensor, aws/sensor-single, azure/sensor, azure/sensor-single, gcp/sensor, or null."
+  }
+}

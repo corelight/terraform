@@ -122,6 +122,7 @@ run "verify_deployment_metadata" {
     deployment_cloud_region              = "us-east-1"
     deployment_traffic_mirroring_enabled = true
     terraform_module_version             = "v29.0.5-7"
+    terraform_module                     = "aws/sensor"
   }
 
   assert {
@@ -156,6 +157,14 @@ run "verify_deployment_metadata" {
   }
 
   assert {
+    condition = try(
+      yamldecode(local.deployment_metadata_yaml)["deployment_metadata.terraform_module"] == "aws/sensor",
+      false,
+    )
+    error_message = "Metadata should contain the Terraform module identity"
+  }
+
+  assert {
     condition = strcontains(
       data.cloudinit_config.config.part[0].content,
       "corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml",
@@ -185,6 +194,27 @@ run "verify_unknown_mirroring_is_omitted" {
     condition     = !strcontains(local.deployment_metadata_yaml, "terraform_module_version")
     error_message = "Missing Terraform module version should be omitted"
   }
+
+  assert {
+    condition     = !strcontains(local.deployment_metadata_yaml, "terraform_module")
+    error_message = "Missing Terraform module identity should be omitted"
+  }
+}
+
+run "reject_invalid_terraform_module" {
+  command = plan
+
+  variables {
+    sensor_license                   = "test-license-key"
+    fleet_community_string           = "test-community"
+    sensor_management_interface_name = "eth1"
+    sensor_monitoring_interface_name = "eth0"
+    deployment_cloud_provider        = "aws"
+    deployment_cloud_region          = "us-east-1"
+    terraform_module                 = "aws/sensor "
+  }
+
+  expect_failures = [var.terraform_module]
 }
 
 run "verify_malformed_terraform_module_version_is_omitted" {
