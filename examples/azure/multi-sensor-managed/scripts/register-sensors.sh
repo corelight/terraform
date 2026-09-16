@@ -110,7 +110,7 @@ for sensor_name in "${sensor_names[@]}"; do
     '.[$name] = $token')
 
   echo "    Registered with token ${pairing_token:0:8}..."
-  ((new_count++))
+  new_count=$((new_count + 1))
 done
 
 # Write updated manifest
