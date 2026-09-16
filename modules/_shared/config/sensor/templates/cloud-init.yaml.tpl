@@ -39,13 +39,6 @@ write_files:
               port: ${health_port}
               net: ${probe}
 %{ endfor ~}
-%{ if deployment_metadata != "" ~}
-  - owner: root:root
-    path: /etc/corelight/deployment-metadata.yaml
-    permissions: '0644'
-    encoding: b64
-    content: ${deployment_metadata}
-%{ endif ~}
 %{ if fleet_token != "" && fleet_url != "" ~}
         pairing:
           token: ${fleet_token}
@@ -60,6 +53,13 @@ write_files:
 %{ if fleet_no_proxy != "" ~}
           no_proxy: ${fleet_no_proxy}
 %{ endif ~}
+%{ endif ~}
+%{ if deployment_metadata != "" ~}
+  - owner: root:root
+    path: /etc/corelight/deployment-metadata.yaml
+    permissions: '0644'
+    encoding: b64
+    content: ${deployment_metadata}
 %{ endif ~}
 
 runcmd:
