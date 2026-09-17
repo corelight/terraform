@@ -255,6 +255,12 @@ variable "sensor_monitoring_security_group_description" {
   default     = "monitoring security group for the sensor which allows ssh"
 }
 
+variable "corelight_package_repo_token" {
+  description = "Authentication token for the Corelight package repository (from https://my.corelight.cloud/)"
+  type        = string
+  sensitive   = true
+}
+
 # AWS Provider Configuration
 variable "region" {
   description = "AWS region where resources will be deployed"

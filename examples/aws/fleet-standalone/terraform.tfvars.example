@@ -24,6 +24,7 @@ fleet_username                 = "<fleet username>"
 fleet_password                 = "<fleet password>"
 fleet_certificate_file_path    = "<path to fleet certificate file>"
 fleet_sensor_license_file_path = "<path to fleet sensor license file>"
+corelight_package_repo_token   = "<your package repo token from https://my.corelight.cloud/>"
 
 # Optional Configuration (uncomment to override defaults)
 # fleet_ami_id = "ami-xxxxx"  # Optional: Custom AMI for Fleet (defaults to latest Ubuntu 22.04)
