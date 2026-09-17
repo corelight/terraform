@@ -35,7 +35,7 @@ module "fleet" {
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.65.0 |
 
 ## Inputs
 
@@ -58,6 +58,7 @@ module "fleet" {
 | <a name="input_aws_ec2_size"></a> [aws\_ec2\_size](#input\_aws\_ec2\_size) | EC2 instance type/size. Follow documentation for Fleet to determine the appropriate size. | `string` | `"t3.large"` | no |
 | <a name="input_aws_volume_size"></a> [aws\_volume\_size](#input\_aws\_volume\_size) | Root EBS volume size (GB). | `number` | `50` | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | ACM certificate ARN for HTTPS. Optional; if not provided, users will see a browser warning when accessing Fleet. | `string` | `""` | no |
+| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/). If not set, falls back to the legacy public repository. | `string` | `""` | no |
 | <a name="input_fleet_alb_name"></a> [fleet\_alb\_name](#input\_fleet\_alb\_name) | The name of the Fleet ALB. | `string` | `"corelight-fleet-alb"` | no |
 | <a name="input_fleet_alb_security_group_name"></a> [fleet\_alb\_security\_group\_name](#input\_fleet\_alb\_security\_group\_name) | Name of the security group used by the ALB. | `string` | `"corelight-fleet-alb-security-group"` | no |
 | <a name="input_fleet_ami_id"></a> [fleet\_ami\_id](#input\_fleet\_ami\_id) | Optional: AMI ID to use for Fleet instance. If not provided, the latest Ubuntu 22.04 LTS AMI will be used. | `string` | `null` | no |
