@@ -46,6 +46,7 @@ run "verify_required_variables" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -84,6 +85,7 @@ run "verify_custom_names" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     fleet_instance_name            = "custom-fleet"
     fleet_alb_name                 = "custom-alb"
     fleet_lb_target_group_name     = "custom-tg"
@@ -125,6 +127,7 @@ run "verify_instance_configuration" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     aws_ec2_size                   = "t3.xlarge"
     aws_volume_size                = 100
   }
@@ -170,6 +173,7 @@ run "verify_alb_configuration" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -213,6 +217,7 @@ run "verify_alb_listeners" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -261,6 +266,7 @@ run "verify_target_groups" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -309,6 +315,7 @@ run "verify_security_groups_created" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -347,6 +354,7 @@ run "verify_security_groups_with_existing" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     alb_security_group_id          = "sg-existing-alb"
     instance_security_group_id     = "sg-existing-instance"
   }
@@ -382,6 +390,7 @@ run "verify_route53_dns" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -415,6 +424,7 @@ run "verify_admin_cidr_blocks" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     admin_cidr_blocks              = ["203.0.113.0/24"]
   }
 
@@ -444,6 +454,7 @@ run "verify_no_admin_cidr_blocks" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     admin_cidr_blocks              = []
   }
 
@@ -473,6 +484,7 @@ run "verify_custom_ami_id" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     fleet_ami_id                   = "ami-custom12345"
   }
 
@@ -507,6 +519,7 @@ run "verify_default_ami_lookup" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {

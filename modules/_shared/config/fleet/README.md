@@ -75,12 +75,12 @@ module "fleet" {
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_community_string"></a> [community\_string](#input\_community\_string) | community string for sensor pairing | `string` | n/a | yes |
+| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/) | `string` | n/a | yes |
 | <a name="input_fleet_certificate"></a> [fleet\_certificate](#input\_fleet\_certificate) | Base64-encoded Fleet certificate | `string` | n/a | yes |
 | <a name="input_fleet_password"></a> [fleet\_password](#input\_fleet\_password) | Password for the Fleet user | `string` | n/a | yes |
 | <a name="input_fleet_sensor_license"></a> [fleet\_sensor\_license](#input\_fleet\_sensor\_license) | Base64-encoded Fleet sensor license | `string` | n/a | yes |
 | <a name="input_fleet_username"></a> [fleet\_username](#input\_fleet\_username) | Username for the Fleet user | `string` | n/a | yes |
 | <a name="input_base64_encode_config"></a> [base64\_encode\_config](#input\_base64\_encode\_config) | should the configuration be base64 encoded | `bool` | `false` | no |
-| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/) | `string` | `""` | no |
 | <a name="input_fleet_version"></a> [fleet\_version](#input\_fleet\_version) | Fleet Manager version to install (e.g., 28.2.2) | `string` | `"28.2.2"` | no |
 | <a name="input_gzip_config"></a> [gzip\_config](#input\_gzip\_config) | should the configuration be gzipped | `bool` | `false` | no |
 | <a name="input_radius_address"></a> [radius\_address](#input\_radius\_address) | RADIUS server address and port (e.g., 1.2.3.4:1812) | `string` | `""` | no |

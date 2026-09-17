@@ -69,6 +69,7 @@ TLS termination happens at the Fleet service itself — the load balancer perfor
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_community_string"></a> [community\_string](#input\_community\_string) | Fleet community string for sensor pairing | `string` | n/a | yes |
+| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/) | `string` | n/a | yes |
 | <a name="input_fleet_certificate_file_path"></a> [fleet\_certificate\_file\_path](#input\_fleet\_certificate\_file\_path) | Path to the Fleet certificate file | `string` | n/a | yes |
 | <a name="input_fleet_password"></a> [fleet\_password](#input\_fleet\_password) | Fleet admin password | `string` | n/a | yes |
 | <a name="input_fleet_sensor_license_file_path"></a> [fleet\_sensor\_license\_file\_path](#input\_fleet\_sensor\_license\_file\_path) | Path to the Fleet sensor license file | `string` | n/a | yes |
@@ -80,7 +81,6 @@ TLS termination happens at the Fleet service itself — the load balancer perfor
 | <a name="input_admin_cidr_blocks"></a> [admin\_cidr\_blocks](#input\_admin\_cidr\_blocks) | List of CIDR blocks for SSH admin access to the Fleet VM. If empty, no SSH rule is created. | `list(string)` | `[]` | no |
 | <a name="input_admin_username"></a> [admin\_username](#input\_admin\_username) | The admin username for the Fleet VM | `string` | `"corelight"` | no |
 | <a name="input_api_ingress_cidr_blocks"></a> [api\_ingress\_cidr\_blocks](#input\_api\_ingress\_cidr\_blocks) | List of CIDR blocks allowed to access Fleet sensor API on port 1443 | `list(string)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
-| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/). If not set, falls back to the legacy public repository. | `string` | `""` | no |
 | <a name="input_deployment_name"></a> [deployment\_name](#input\_deployment\_name) | Name prefix for all resources (used to avoid naming conflicts) | `string` | `"corelight-fleet"` | no |
 | <a name="input_dns_zone_name"></a> [dns\_zone\_name](#input\_dns\_zone\_name) | The name of an existing Azure DNS zone (e.g., example.com). If not set, DNS record creation is skipped. | `string` | `null` | no |
 | <a name="input_dns_zone_resource_group_name"></a> [dns\_zone\_resource\_group\_name](#input\_dns\_zone\_resource\_group\_name) | The resource group containing the Azure DNS zone. Required if dns\_zone\_name is set. | `string` | `null` | no |

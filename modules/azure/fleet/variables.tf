@@ -136,10 +136,9 @@ variable "fleet_version" {
 }
 
 variable "corelight_package_repo_token" {
-  description = "Authentication token for the Corelight package repository (from https://my.corelight.cloud/). If not set, falls back to the legacy public repository."
+  description = "Authentication token for the Corelight package repository (from https://my.corelight.cloud/)"
   type        = string
   sensitive   = true
-  default     = ""
 }
 
 # RADIUS Authentication

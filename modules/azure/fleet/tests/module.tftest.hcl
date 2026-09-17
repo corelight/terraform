@@ -27,6 +27,7 @@ run "verify_defaults" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -82,6 +83,7 @@ run "verify_custom_vm_config" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     vm_size                        = "Standard_D4s_v5"
     os_disk_size_gb                = 100
     deployment_name                = "custom-fleet"
@@ -130,6 +132,7 @@ run "verify_lb_configuration" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -185,6 +188,7 @@ run "verify_nsg_created" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -230,6 +234,7 @@ run "verify_nsg_with_existing" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     nsg_id                         = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Network/networkSecurityGroups/existing-nsg"
   }
 
@@ -261,6 +266,7 @@ run "verify_admin_ssh_access" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     admin_cidr_blocks              = ["203.0.113.0/24"]
   }
 
@@ -287,6 +293,7 @@ run "verify_dns_enabled" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     dns_zone_name                  = "example.com"
     dns_zone_resource_group_name   = "dns-rg"
     subdomain                      = "fleet"
@@ -325,6 +332,7 @@ run "verify_dns_disabled" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
   }
 
   assert {
@@ -350,6 +358,7 @@ run "verify_custom_image" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     fleet_image_id                 = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Compute/images/custom-fleet-image"
   }
 
@@ -376,6 +385,7 @@ run "verify_tags_propagated" {
     fleet_password                 = "test-password"
     fleet_certificate_file_path    = "./tests/test-cert.pem"
     fleet_sensor_license_file_path = "./tests/test-license.txt"
+    corelight_package_repo_token   = "test-token-abc123"
     tags = {
       Environment = "test"
       Team        = "security"

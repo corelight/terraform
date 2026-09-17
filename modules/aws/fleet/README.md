@@ -43,6 +43,7 @@ module "fleet" {
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_key_pair_name"></a> [aws\_key\_pair\_name](#input\_aws\_key\_pair\_name) | The name of the AWS key pair for accessing Fleet instances. | `string` | n/a | yes |
 | <a name="input_community_string"></a> [community\_string](#input\_community\_string) | Fleet community string for sensor pairing. | `string` | n/a | yes |
+| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/) | `string` | n/a | yes |
 | <a name="input_fleet_certificate_file_path"></a> [fleet\_certificate\_file\_path](#input\_fleet\_certificate\_file\_path) | Path to the Fleet certificate file. | `string` | n/a | yes |
 | <a name="input_fleet_password"></a> [fleet\_password](#input\_fleet\_password) | Fleet admin password. | `string` | n/a | yes |
 | <a name="input_fleet_sensor_license_file_path"></a> [fleet\_sensor\_license\_file\_path](#input\_fleet\_sensor\_license\_file\_path) | Path to the Fleet sensor license file. | `string` | n/a | yes |
@@ -58,7 +59,6 @@ module "fleet" {
 | <a name="input_aws_ec2_size"></a> [aws\_ec2\_size](#input\_aws\_ec2\_size) | EC2 instance type/size. Follow documentation for Fleet to determine the appropriate size. | `string` | `"t3.large"` | no |
 | <a name="input_aws_volume_size"></a> [aws\_volume\_size](#input\_aws\_volume\_size) | Root EBS volume size (GB). | `number` | `50` | no |
 | <a name="input_certificate_arn"></a> [certificate\_arn](#input\_certificate\_arn) | ACM certificate ARN for HTTPS. Optional; if not provided, users will see a browser warning when accessing Fleet. | `string` | `""` | no |
-| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/). If not set, falls back to the legacy public repository. | `string` | `""` | no |
 | <a name="input_fleet_alb_name"></a> [fleet\_alb\_name](#input\_fleet\_alb\_name) | The name of the Fleet ALB. | `string` | `"corelight-fleet-alb"` | no |
 | <a name="input_fleet_alb_security_group_name"></a> [fleet\_alb\_security\_group\_name](#input\_fleet\_alb\_security\_group\_name) | Name of the security group used by the ALB. | `string` | `"corelight-fleet-alb-security-group"` | no |
 | <a name="input_fleet_ami_id"></a> [fleet\_ami\_id](#input\_fleet\_ami\_id) | Optional: AMI ID to use for Fleet instance. If not provided, the latest Ubuntu 22.04 LTS AMI will be used. | `string` | `null` | no |
