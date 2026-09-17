@@ -41,95 +41,6 @@ resource "azurerm_subnet" "monitoring" {
 }
 
 ####################################################################################################
-# Shared NSGs — one pair for all sensors (instead of per-sensor NSGs)
-####################################################################################################
-
-resource "azurerm_network_security_group" "management" {
-  name                = "${var.deployment_name}-mgmt-nsg"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.sensors.name
-  tags                = local.tags
-}
-
-resource "azurerm_network_security_rule" "mgmt_egress" {
-  name                         = "AllowOutbound"
-  priority                     = 100
-  direction                    = "Outbound"
-  access                       = "Allow"
-  protocol                     = "*"
-  source_port_range            = "*"
-  destination_port_range       = "*"
-  source_address_prefix        = "*"
-  destination_address_prefixes = ["0.0.0.0/0"]
-  resource_group_name          = azurerm_resource_group.sensors.name
-  network_security_group_name  = azurerm_network_security_group.management.name
-}
-
-resource "azurerm_network_security_rule" "mgmt_ssh" {
-  count                       = length(var.ssh_allow_cidrs) > 0 ? 1 : 0
-  name                        = "AllowSSH"
-  priority                    = 110
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "22"
-  source_address_prefixes     = var.ssh_allow_cidrs
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.sensors.name
-  network_security_group_name = azurerm_network_security_group.management.name
-}
-
-resource "azurerm_network_security_group" "monitoring" {
-  name                = "${var.deployment_name}-mon-nsg"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.sensors.name
-  tags                = local.tags
-}
-
-resource "azurerm_network_security_rule" "mon_egress" {
-  name                         = "AllowOutbound"
-  priority                     = 100
-  direction                    = "Outbound"
-  access                       = "Allow"
-  protocol                     = "*"
-  source_port_range            = "*"
-  destination_port_range       = "*"
-  source_address_prefix        = "*"
-  destination_address_prefixes = ["0.0.0.0/0"]
-  resource_group_name          = azurerm_resource_group.sensors.name
-  network_security_group_name  = azurerm_network_security_group.monitoring.name
-}
-
-resource "azurerm_network_security_rule" "mon_vxlan" {
-  name                        = "AllowVXLAN"
-  priority                    = 110
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Udp"
-  source_port_range           = "*"
-  destination_port_range      = "4789"
-  source_address_prefixes     = var.monitoring_ingress_allow_cidrs
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.sensors.name
-  network_security_group_name = azurerm_network_security_group.monitoring.name
-}
-
-resource "azurerm_network_security_rule" "mon_health_check" {
-  name                        = "AllowHealthCheck"
-  priority                    = 120
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "41080"
-  source_address_prefixes     = ["168.63.129.16/32"]
-  destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.sensors.name
-  network_security_group_name = azurerm_network_security_group.monitoring.name
-}
-
-####################################################################################################
 # Internal Load Balancer — distributes mirrored traffic across sensors
 ####################################################################################################
 
@@ -197,15 +108,12 @@ module "sensors" {
   fleet_url            = var.fleet_url
   fleet_server_sslname = var.fleet_server_sslname
 
-  # Use shared NSGs instead of per-sensor ones
-  management_nsg_id = azurerm_network_security_group.management.id
-  monitoring_nsg_id = azurerm_network_security_group.monitoring.id
-
   virtual_machine_size = var.virtual_machine_size
   os_disk_size_gb      = var.os_disk_size_gb
 
-  # Health check source is the Azure LB probe IP
-  health_check_allow_cidrs = ["168.63.129.16/32"]
+  ssh_allow_cidrs                = var.ssh_allow_cidrs
+  monitoring_ingress_allow_cidrs = var.monitoring_ingress_allow_cidrs
+  health_check_allow_cidrs       = ["168.63.129.16/32"]
 
   tags = local.tags
 }
