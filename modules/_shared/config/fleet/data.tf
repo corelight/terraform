@@ -12,6 +12,8 @@ data "cloudinit_config" "config" {
       fleet_password       = var.fleet_password
       fleet_username       = var.fleet_username
 
+      corelight_package_repo_token = var.corelight_package_repo_token
+
       radius_enable        = var.radius_enable
       radius_address       = var.radius_address
       radius_shared_secret = var.radius_shared_secret

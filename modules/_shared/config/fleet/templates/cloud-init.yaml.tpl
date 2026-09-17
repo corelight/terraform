@@ -34,11 +34,33 @@ write_files:
 bootcmd:
   - |
     if [ -f /etc/lsb-release ]; then
+%{ if corelight_package_repo_token != "" }
+      curl -fsSL "https://${corelight_package_repo_token}:@pkgrepos.corelight.cloud/corelight/fleet-stable/gpgkey" | gpg --dearmor | tee /etc/apt/keyrings/corelight_fleet-stable-archive-keyring.gpg > /dev/null
+      echo "deb [signed-by=/etc/apt/keyrings/corelight_fleet-stable-archive-keyring.gpg] https://pkgrepos.corelight.cloud/corelight/fleet-stable/any/ any main" > /etc/apt/sources.list.d/corelight_fleet-stable.list
+      mkdir -p /etc/apt/auth.conf.d
+      echo "machine pkgrepos.corelight.cloud/corelight/fleet-stable/ login ${corelight_package_repo_token} password irrelevant" > /etc/apt/auth.conf.d/corelight_fleet-stable.conf
+%{ else }
       curl -s https://packages.corelight.com/install/repositories/corelight/stable/script.deb.sh | bash
+%{ endif }
       apt-get update
       apt-get install -y corelight-fleet=${fleet_version}*
     elif [ -f /etc/redhat-release ]; then
+%{ if corelight_package_repo_token != "" }
+      cat > /etc/yum.repos.d/corelight_fleet-stable.repo << 'REPO'
+[corelight_fleet-stable_any]
+name=corelight_fleet-stable_any
+baseurl=https://${corelight_package_repo_token}:@pkgrepos.corelight.cloud/corelight/fleet-stable/rpm_any/rpm_any/$basearch
+repo_gpgcheck=1
+gpgcheck=0
+enabled=1
+gpgkey=https://${corelight_package_repo_token}:@pkgrepos.corelight.cloud/corelight/fleet-stable/gpgkey https://downloads.corelight.cloud/public/signing/corelight-package-signing-key.asc
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+REPO
+%{ else }
       curl -s https://packages.corelight.com/install/repositories/corelight/stable/script.rpm.sh | bash
+%{ endif }
       dnf install -y corelight-fleet-${fleet_version}
     fi
 

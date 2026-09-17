@@ -1,0 +1,24 @@
+# Required variables
+location                       = "eastus"
+resource_group_name            = "corelight-fleet-rg"
+virtual_network_name           = "my-existing-vnet"
+virtual_network_resource_group = "networking-rg"
+fleet_subnet_cidr              = "10.0.10.0/24"
+ssh_public_key                 = "ssh-rsa AAAAB3NzaC1..."
+community_string               = "your-community-string"
+fleet_username                 = "admin"
+fleet_password                 = "your-secure-password"
+fleet_certificate_file_path    = "./fleet-cert.pem"
+fleet_sensor_license_file_path = "./fleet-license.txt"
+corelight_package_repo_token               = "your-corelight-package-auth-token"
+
+# Optional
+# deployment_name              = "corelight-fleet"
+# vm_size                      = "Standard_D2s_v5"
+# admin_cidr_blocks            = ["203.0.113.0/24"]
+# dns_zone_name                = "example.com"
+# dns_zone_resource_group_name = "dns-rg"
+# tags = {
+#   Environment = "production"
+#   Team        = "security"
+# }
