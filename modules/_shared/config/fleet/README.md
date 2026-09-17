@@ -68,7 +68,7 @@ module "fleet" {
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | 2.4.1 |
+| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | >= 2.3.0 |
 
 ## Inputs
 

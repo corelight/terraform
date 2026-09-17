@@ -62,7 +62,7 @@ TLS termination happens at the Fleet service itself — the load balancer perfor
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.81.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.0, < 5.0 |
 
 ## Inputs
 
