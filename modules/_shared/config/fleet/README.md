@@ -75,6 +75,7 @@ module "fleet" {
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_community_string"></a> [community\_string](#input\_community\_string) | community string for sensor pairing | `string` | n/a | yes |
+| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/) | `string` | n/a | yes |
 | <a name="input_fleet_certificate"></a> [fleet\_certificate](#input\_fleet\_certificate) | Base64-encoded Fleet certificate | `string` | n/a | yes |
 | <a name="input_fleet_password"></a> [fleet\_password](#input\_fleet\_password) | Password for the Fleet user | `string` | n/a | yes |
 | <a name="input_fleet_sensor_license"></a> [fleet\_sensor\_license](#input\_fleet\_sensor\_license) | Base64-encoded Fleet sensor license | `string` | n/a | yes |

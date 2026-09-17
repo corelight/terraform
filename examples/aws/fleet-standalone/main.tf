@@ -13,4 +13,5 @@ module "fleet" {
   fleet_password                 = var.fleet_password
   fleet_certificate_file_path    = var.fleet_certificate_file_path
   fleet_sensor_license_file_path = var.fleet_sensor_license_file_path
+  corelight_package_repo_token   = var.corelight_package_repo_token
 }

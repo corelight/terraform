@@ -24,6 +24,7 @@ fleet_username                 = "admin"
 fleet_password                 = "changeme"
 fleet_certificate_file_path    = "path/to/certificate.pem"
 fleet_sensor_license_file_path = "path/to/license.txt"
+corelight_package_repo_token   = "<your package repo token from https://my.corelight.cloud/>"
 
 # Fleet Optional Configuration (uncomment to override defaults)
 # alb_security_group_id              = null

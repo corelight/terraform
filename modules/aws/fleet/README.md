@@ -43,6 +43,7 @@ module "fleet" {
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_aws_key_pair_name"></a> [aws\_key\_pair\_name](#input\_aws\_key\_pair\_name) | The name of the AWS key pair for accessing Fleet instances. | `string` | n/a | yes |
 | <a name="input_community_string"></a> [community\_string](#input\_community\_string) | Fleet community string for sensor pairing. | `string` | n/a | yes |
+| <a name="input_corelight_package_repo_token"></a> [corelight\_package\_repo\_token](#input\_corelight\_package\_repo\_token) | Authentication token for the Corelight package repository (from https://my.corelight.cloud/) | `string` | n/a | yes |
 | <a name="input_fleet_certificate_file_path"></a> [fleet\_certificate\_file\_path](#input\_fleet\_certificate\_file\_path) | Path to the Fleet certificate file. | `string` | n/a | yes |
 | <a name="input_fleet_password"></a> [fleet\_password](#input\_fleet\_password) | Fleet admin password. | `string` | n/a | yes |
 | <a name="input_fleet_sensor_license_file_path"></a> [fleet\_sensor\_license\_file\_path](#input\_fleet\_sensor\_license\_file\_path) | Path to the Fleet sensor license file. | `string` | n/a | yes |

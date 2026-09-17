@@ -121,6 +121,12 @@ variable "fleet_version" {
   default     = "28.2.2"
 }
 
+variable "corelight_package_repo_token" {
+  description = "Authentication token for the Corelight package repository (from https://my.corelight.cloud/)"
+  type        = string
+  sensitive   = true
+}
+
 # RADIUS Authentication
 
 variable "radius_enable" {
