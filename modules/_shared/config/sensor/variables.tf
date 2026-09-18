@@ -111,3 +111,56 @@ variable "fedramp_mode_enabled" {
   default     = false
   description = "(optional) enable Fedramp mode"
 }
+
+variable "deployment_cloud_provider" {
+  type        = string
+  default     = null
+  description = "Cloud provider recorded as deployment metadata"
+
+  validation {
+    condition = var.deployment_cloud_provider == null ? true : contains(
+      ["aws", "azure", "gcp"], var.deployment_cloud_provider
+    )
+    error_message = "deployment_cloud_provider must be aws, azure, gcp, or null."
+  }
+}
+
+variable "deployment_cloud_region" {
+  type        = string
+  default     = null
+  description = "Cloud region recorded as deployment metadata"
+
+  validation {
+    condition = var.deployment_cloud_region == null ? true : (
+      length(trimspace(var.deployment_cloud_region)) > 0 &&
+      length(base64encode(trimspace(var.deployment_cloud_region))) <= 340 &&
+      !can(regex("\\p{Cc}", var.deployment_cloud_region))
+    )
+    error_message = "deployment_cloud_region must be 1-255 UTF-8 bytes without control characters, or null."
+  }
+}
+
+variable "deployment_traffic_mirroring_enabled" {
+  type        = bool
+  default     = null
+  description = "Whether this Terraform path explicitly enabled traffic mirroring"
+}
+
+variable "terraform_module_version" {
+  type        = string
+  default     = null
+  description = "Published Corelight Terraform module release version"
+}
+
+variable "terraform_module" {
+  type        = string
+  default     = null
+  description = "Canonical Corelight Terraform module identity"
+
+  validation {
+    condition = var.terraform_module == null ? true : contains(
+      ["aws/sensor", "aws/sensor-single", "azure/sensor", "azure/sensor-single", "gcp/sensor"], var.terraform_module
+    )
+    error_message = "terraform_module must be aws/sensor, aws/sensor-single, azure/sensor, azure/sensor-single, gcp/sensor, or null."
+  }
+}
