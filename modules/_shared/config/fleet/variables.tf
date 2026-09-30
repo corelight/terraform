@@ -50,6 +50,12 @@ variable "radius_shared_secret" {
   sensitive   = true
 }
 
+variable "corelight_package_repo_token" {
+  description = "Authentication token for the Corelight package repository (from https://my.corelight.cloud/)"
+  type        = string
+  sensitive   = true
+}
+
 variable "gzip_config" {
   type        = bool
   default     = false

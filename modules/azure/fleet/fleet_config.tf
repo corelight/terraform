@@ -7,12 +7,12 @@ module "fleet_config" {
   fleet_password       = var.fleet_password
   fleet_username       = var.fleet_username
 
-  # Optional - RADIUS
   radius_enable        = var.radius_enable
   radius_address       = var.radius_address
   radius_shared_secret = var.radius_shared_secret
 
-  # Optional - Fleet Version
   fleet_version                = var.fleet_version
   corelight_package_repo_token = var.corelight_package_repo_token
+  gzip_config                  = true
+  base64_encode_config         = true
 }

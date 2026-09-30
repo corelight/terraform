@@ -11,12 +11,13 @@ run "verify_basic_config_generation" {
   }
 
   variables {
-    fleet_certificate    = "-----BEGIN CERTIFICATE-----\ntest-cert\n-----END CERTIFICATE-----"
-    fleet_sensor_license = "test-license-content"
-    community_string     = "test-community"
-    fleet_username       = "admin"
-    fleet_password       = "test-password"
-    base64_encode_config = true
+    fleet_certificate            = "-----BEGIN CERTIFICATE-----\ntest-cert\n-----END CERTIFICATE-----"
+    fleet_sensor_license         = "test-license-content"
+    community_string             = "test-community"
+    fleet_username               = "admin"
+    fleet_password               = "test-password"
+    corelight_package_repo_token = "test-token-abc123"
+    base64_encode_config         = true
   }
 
   assert {
@@ -38,13 +39,14 @@ run "verify_fleet_version" {
   }
 
   variables {
-    fleet_certificate    = "test-cert"
-    fleet_sensor_license = "test-license"
-    community_string     = "test-community"
-    fleet_username       = "admin"
-    fleet_password       = "test-password"
-    fleet_version        = "28.4.0"
-    base64_encode_config = false
+    fleet_certificate            = "test-cert"
+    fleet_sensor_license         = "test-license"
+    community_string             = "test-community"
+    fleet_username               = "admin"
+    fleet_password               = "test-password"
+    corelight_package_repo_token = "test-token-abc123"
+    fleet_version                = "28.4.0"
+    base64_encode_config         = false
   }
 
   assert {
@@ -66,13 +68,14 @@ run "verify_gzip_option" {
   }
 
   variables {
-    fleet_certificate    = "test-cert"
-    fleet_sensor_license = "test-license"
-    community_string     = "test-community"
-    fleet_username       = "admin"
-    fleet_password       = "test-password"
-    gzip_config          = true
-    base64_encode_config = true
+    fleet_certificate            = "test-cert"
+    fleet_sensor_license         = "test-license"
+    community_string             = "test-community"
+    fleet_username               = "admin"
+    fleet_password               = "test-password"
+    corelight_package_repo_token = "test-token-abc123"
+    gzip_config                  = true
+    base64_encode_config         = true
   }
 
   assert {
@@ -94,12 +97,13 @@ run "verify_radius_disabled_by_default" {
   }
 
   variables {
-    fleet_certificate    = "test-cert"
-    fleet_sensor_license = "test-license"
-    community_string     = "test-community"
-    fleet_username       = "admin"
-    fleet_password       = "test-password"
-    base64_encode_config = false
+    fleet_certificate            = "test-cert"
+    fleet_sensor_license         = "test-license"
+    community_string             = "test-community"
+    fleet_username               = "admin"
+    fleet_password               = "test-password"
+    corelight_package_repo_token = "test-token-abc123"
+    base64_encode_config         = false
   }
 
   assert {
@@ -116,15 +120,16 @@ run "verify_radius_configuration" {
   }
 
   variables {
-    fleet_certificate    = "test-cert"
-    fleet_sensor_license = "test-license"
-    community_string     = "test-community"
-    fleet_username       = "admin"
-    fleet_password       = "test-password"
-    radius_enable        = true
-    radius_address       = "192.168.1.100:1812"
-    radius_shared_secret = "radius-secret"
-    base64_encode_config = false
+    fleet_certificate            = "test-cert"
+    fleet_sensor_license         = "test-license"
+    community_string             = "test-community"
+    fleet_username               = "admin"
+    fleet_password               = "test-password"
+    corelight_package_repo_token = "test-token-abc123"
+    radius_enable                = true
+    radius_address               = "192.168.1.100:1812"
+    radius_shared_secret         = "radius-secret"
+    base64_encode_config         = false
   }
 
   assert {
@@ -141,12 +146,13 @@ run "verify_output_exists" {
   }
 
   variables {
-    fleet_certificate    = "test-cert"
-    fleet_sensor_license = "test-license"
-    community_string     = "test-community"
-    fleet_username       = "admin"
-    fleet_password       = "test-password"
-    base64_encode_config = true
+    fleet_certificate            = "test-cert"
+    fleet_sensor_license         = "test-license"
+    community_string             = "test-community"
+    fleet_username               = "admin"
+    fleet_password               = "test-password"
+    corelight_package_repo_token = "test-token-abc123"
+    base64_encode_config         = true
   }
 
   assert {
@@ -163,12 +169,13 @@ run "verify_default_fleet_version" {
   }
 
   variables {
-    fleet_certificate    = "test-cert"
-    fleet_sensor_license = "test-license"
-    community_string     = "test-community"
-    fleet_username       = "admin"
-    fleet_password       = "test-password"
-    base64_encode_config = false
+    fleet_certificate            = "test-cert"
+    fleet_sensor_license         = "test-license"
+    community_string             = "test-community"
+    fleet_username               = "admin"
+    fleet_password               = "test-password"
+    corelight_package_repo_token = "test-token-abc123"
+    base64_encode_config         = false
   }
 
   assert {

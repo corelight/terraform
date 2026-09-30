@@ -63,6 +63,12 @@ variable "fleet_sensor_license_file_path" {
   type        = string
 }
 
+variable "corelight_package_repo_token" {
+  description = "Authentication token for the Corelight package repository (from https://my.corelight.cloud/)"
+  type        = string
+  sensitive   = true
+}
+
 # AWS Provider Configuration
 variable "region" {
   description = "AWS region where resources will be deployed"
