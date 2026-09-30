@@ -143,6 +143,10 @@ module "sensor_config" {
   count  = var.custom_sensor_user_data == "" ? 1 : 0
   source = "../../_shared/config/sensor"
 
+  deployment_cloud_provider = "azure"
+  deployment_cloud_region   = var.location
+  terraform_module          = "azure/sensor-single"
+
   fleet_community_string           = var.community_string
   sensor_license                   = var.license_key
   fleet_token                      = var.fleet_token

@@ -63,6 +63,7 @@ test-aws:
 # Run release-script tests
 test-release:
     ./scripts/release/test_compute_next_tag.sh
+    ./scripts/release/test_stamp_release_version.sh
 
 # Run Trivy security scan
 trivy-scan:

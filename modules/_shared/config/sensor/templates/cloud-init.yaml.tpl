@@ -54,9 +54,26 @@ write_files:
           no_proxy: ${fleet_no_proxy}
 %{ endif ~}
 %{ endif ~}
+%{ if deployment_metadata != "" ~}
+  - owner: root:root
+    path: /etc/corelight/deployment-metadata.yaml
+    permissions: '0644'
+    encoding: b64
+    content: ${deployment_metadata}
+%{ endif ~}
 
 runcmd:
+%{ if deployment_metadata != "" ~}
+  - |
+    if ! corelightctl sensor deploy -v; then
+      exit 1
+    fi
+    if ! corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml; then
+      logger -t corelight-deployment-metadata "Sensor API did not accept deployment metadata; inventory fields will remain null"
+    fi
+%{ else ~}
   - corelightctl sensor deploy -v
+%{ endif ~}
 %{ if azure_fips_enabled ~}
   - |
     timeout=120

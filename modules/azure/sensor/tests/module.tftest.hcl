@@ -33,7 +33,29 @@ run "test_minimal_configuration" {
     fleet_server_sslname      = "fleet.example.com"
   }
 
-  # Validates minimal required configuration works
+  assert {
+    condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_provider"] == "azure",
+      false,
+    )
+    error_message = "Provider module should pass deployment metadata to shared cloud-init"
+  }
+
+  assert {
+    condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.terraform_module"] == "azure/sensor",
+      false,
+    )
+    error_message = "Provider module should pass its Terraform module identity"
+  }
+
+  assert {
+    condition = try(
+      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_region"] == "eastus",
+      false,
+    )
+    error_message = "Provider module should pass the Azure location to shared cloud-init"
+  }
 }
 
 run "test_with_fleet_proxy_configuration" {
@@ -126,5 +148,3 @@ run "test_custom_vm_configuration" {
 
   # Validates custom VM configuration
 }
-
-

@@ -30,11 +30,18 @@ and emits `next_tag=v<sensor>-<meta>` on stdout.
 
 1. Checkout (with full tag history).
 2. `scripts/release/compute-next-tag.sh` -> emits `next_tag=...`.
-3. `git tag <next_tag>` and `git push origin <next_tag>`.
-4. `gh release create <next_tag> --generate-notes`.
+3. `scripts/release/stamp-release-version.sh <next_tag>` creates a local,
+   release-only commit containing `RELEASE_VERSION`.
+4. `git tag <next_tag>` tags that commit and pushes only the tag ref.
+5. `gh release create <next_tag> --generate-notes`.
 
 A GHA `concurrency` group serializes runs so two near-simultaneous merges
 don't race.
+
+The stamped commit is reachable through the tag but is never pushed to
+`refs/heads/main`. The workflow listens only for pushes to `main`, so publishing
+the tag cannot start another auto-tag run. Unreleased branch commits retain an
+empty `RELEASE_VERSION` and do not report a module version.
 
 ## How a new sensor version is rolled out
 
@@ -61,8 +68,9 @@ macOS both handle this. No special coreutils install is required.
 ## Force-push recovery
 
 If `main` is force-pushed and old tags now point at orphaned commits, the
-compute script logs a warning to stderr but continues to tag normally. To
-retire orphaned tags:
+compute script logs a warning to stderr but continues to tag normally. The
+expected one-file release stamp is not treated as orphaned when its parent is
+still on `main`. To retire genuinely orphaned tags:
 
 ```bash
 git push origin --delete v<sensor>-<n>

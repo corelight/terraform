@@ -96,6 +96,30 @@ test_same_sensor_increment() {
 
 test_same_sensor_increment
 
+test_release_only_stamp_does_not_warn() {
+  # Publishing tags a one-file commit whose parent remains on main. A later
+  # main commit should treat that release-only commit as expected history.
+  local repo out err
+  repo=$(mktmprepo 29.0.5)
+  (
+    cd "$repo"
+    git checkout -q --detach
+    printf '%s\n' 'v29.0.5-3' > RELEASE_VERSION
+    git add RELEASE_VERSION
+    git commit -q -m "release stamp"
+    git tag v29.0.5-3
+    git checkout -q main
+    git commit -q --allow-empty -m "main moved on"
+  )
+  out=$(cd "$repo" && "$SCRIPT" 2>/tmp/compute-next-tag.stderr.$$)
+  err=$(cat /tmp/compute-next-tag.stderr.$$)
+  rm -f /tmp/compute-next-tag.stderr.$$
+  assert_eq "release-only stamp: emits next tag" "next_tag=v29.0.5-4" "$out"
+  assert_eq "release-only stamp: does not warn" "" "$err"
+}
+
+test_release_only_stamp_does_not_warn
+
 test_first_release_of_sensor() {
   # VERSION set, but no tags exist yet for this sensor -> meta 1.
   local repo out

@@ -1,3 +1,36 @@
+locals {
+  terraform_module_version_raw = var.terraform_module_version != null ? var.terraform_module_version : try(
+    chomp(file("${path.module}/../../../../RELEASE_VERSION")),
+    null,
+  )
+  terraform_module_version = local.terraform_module_version_raw == null ? null : (
+    length(local.terraform_module_version_raw) <= 64 && can(regex(
+      "^v(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)-[1-9][0-9]*$",
+      local.terraform_module_version_raw,
+    )) ? local.terraform_module_version_raw : null
+  )
+  deployment_metadata = (
+    var.deployment_cloud_provider == null || var.deployment_cloud_region == null
+    ? null
+    : merge(
+      {
+        "deployment_metadata.cloud_provider" = var.deployment_cloud_provider
+        "deployment_metadata.cloud_region"   = trimspace(var.deployment_cloud_region)
+      },
+      var.deployment_traffic_mirroring_enabled == null ? {} : {
+        "deployment_metadata.cloud_traffic_mirroring_enabled" = tostring(var.deployment_traffic_mirroring_enabled)
+      },
+      local.terraform_module_version == null ? {} : {
+        "deployment_metadata.terraform_module_version" = local.terraform_module_version
+      },
+      var.terraform_module == null ? {} : {
+        "deployment_metadata.terraform_module" = var.terraform_module
+      },
+    )
+  )
+  deployment_metadata_yaml = local.deployment_metadata == null ? "" : yamlencode(local.deployment_metadata)
+}
+
 data "cloudinit_config" "config" {
   gzip          = var.gzip_config
   base64_encode = var.base64_encode_config
@@ -15,6 +48,7 @@ data "cloudinit_config" "config" {
       probe_ranges         = var.sensor_health_check_probe_source_ranges_cidr
       mon_subnet           = var.subnetwork_monitoring_cidr
       mon_gateway          = var.subnetwork_monitoring_gateway
+      deployment_metadata  = local.deployment_metadata_yaml == "" ? "" : base64encode(local.deployment_metadata_yaml)
 
       fleet_token          = var.fleet_token
       fleet_url            = var.fleet_url

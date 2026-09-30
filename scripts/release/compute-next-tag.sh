@@ -51,15 +51,24 @@ if [[ -z "$highest" ]]; then
 else
   next_meta=$((10#$highest + 1))
 
-  # Soft sanity check: warn if the highest-meta tag's commit isn't an ancestor
-  # of HEAD (e.g., after a force-push to main). Don't fail — failing here would
-  # block all future tagging.
+  # Soft sanity check: warn if the highest-meta tag isn't on main and isn't the
+  # expected one-file release stamp whose parent is on main. Don't fail — a
+  # warning must not block all future tagging after a force-push.
   latest_tag="v${sensor}-${highest}"
   latest_sha=$(git rev-list -n 1 "$latest_tag" 2>/dev/null || true)
   head_sha=$(git rev-parse HEAD 2>/dev/null || true)
   if [[ -n "$latest_sha" && -n "$head_sha" ]]; then
     if ! git merge-base --is-ancestor "$latest_sha" "$head_sha" 2>/dev/null; then
-      echo "compute-next-tag: warning: latest tag $latest_tag ($latest_sha) is not an ancestor of HEAD ($head_sha). Possible force-push." >&2
+      latest_parent=$(git rev-parse "${latest_sha}^" 2>/dev/null || true)
+      changed_paths=$(git diff-tree --no-commit-id --name-only -r "$latest_sha" 2>/dev/null || true)
+      stamped_version=$(git show "${latest_tag}:RELEASE_VERSION" 2>/dev/null || true)
+
+      if [[ -z "$latest_parent" \
+         || "$changed_paths" != "RELEASE_VERSION" \
+         || "$stamped_version" != "$latest_tag" ]] \
+         || ! git merge-base --is-ancestor "$latest_parent" "$head_sha" 2>/dev/null; then
+        echo "compute-next-tag: warning: latest tag $latest_tag ($latest_sha) is not an ancestor of HEAD ($head_sha). Possible force-push." >&2
+      fi
     fi
   fi
 fi
