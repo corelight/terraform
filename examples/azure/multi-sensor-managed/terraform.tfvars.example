@@ -1,0 +1,22 @@
+# Required
+location                       = "eastus2"
+resource_group_name            = "corelight-sensors-rg"
+virtual_network_name           = "my-existing-vnet"
+virtual_network_resource_group = "networking-rg"
+management_subnet_cidr         = "10.0.10.0/24"
+monitoring_subnet_cidr         = "10.0.11.0/24"
+
+corelight_sensor_image_id = "/subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCE_GROUP/providers/Microsoft.Compute/galleries/GALLERY/images/corelight-sensor/versions/29.0.5"
+sensor_ssh_public_key     = "ssh-rsa AAAA..."
+
+fleet_url        = "https://fleet.example.com:1443"
+community_string = "REPLACE_ME"
+# fleet_server_sslname = "1.broala.fleet.product.corelight.io"  # default; override if needed
+
+# Optional
+# deployment_name = "corelight"
+# virtual_machine_size = "Standard_D8s_v7"
+# os_disk_size_gb = 500
+# ssh_allow_cidrs = ["10.0.0.0/8"]
+# monitoring_ingress_allow_cidrs = ["10.0.0.0/8"]
+# tags = { environment = "production" }
