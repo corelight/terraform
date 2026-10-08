@@ -36,6 +36,32 @@ The project is licensed under the MIT license.
 
 [MIT]: LICENSE
 
+## Deployment metadata
+
+Terraform records `terraform_module`, the published `terraform_module_version`,
+and `cloud_traffic_mirroring_enabled` when the module knows the mirroring state.
+Unknown mirroring state and unavailable or invalid module versions are omitted.
+The shared module omits the metadata file and configuration command when none of
+these fields is available. Published versions are stamped at release time;
+untagged source does not report a release version.
+
+`corelightctl` owns `cloud_provider` and `cloud_region`, using the instance metadata
+probe delivered by [CLOUD-1534](https://corelight.atlassian.net/browse/CLOUD-1534)
+([Elysium !7563](https://gitlab.com/corelight/engineering/elysium/-/merge_requests/7563)). These
+Terraform modules no longer set those fields. Cloud provider and region settings
+used to provision infrastructure are unchanged. Direct callers of this shared
+module must remove the retired `deployment_cloud_provider` and
+`deployment_cloud_region` arguments from their configuration.
+
+With older Terraform modules and the updated `corelightctl`, the probe determines
+provider and region even if provisioning supplies them. With these modules and an
+older `corelightctl`, provider and region may remain unknown/null. Deployments that
+need these fields must use a sensor release containing CLOUD-1534; no compatible
+released sensor version is asserted here. Merge and publication of this Terraform
+change must wait for CLOUD-1534 delivery, because merging to `main` automatically
+publishes a module tag. Acceptance still requires deployment from the new published
+tag and verification on supported sensor builds.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -60,8 +86,6 @@ The project is licensed under the MIT license.
 | <a name="input_sensor_monitoring_interface_name"></a> [sensor\_monitoring\_interface\_name](#input\_sensor\_monitoring\_interface\_name) | the sensor(s) monitoring interface name | `string` | n/a | yes |
 | <a name="input_azure_fips_enabled"></a> [azure\_fips\_enabled](#input\_azure\_fips\_enabled) | (optional) enable FIPS mode on Azure instances | `bool` | `false` | no |
 | <a name="input_base64_encode_config"></a> [base64\_encode\_config](#input\_base64\_encode\_config) | should the configuration be base64 encoded | `bool` | `false` | no |
-| <a name="input_deployment_cloud_provider"></a> [deployment\_cloud\_provider](#input\_deployment\_cloud\_provider) | Cloud provider recorded as deployment metadata | `string` | `null` | no |
-| <a name="input_deployment_cloud_region"></a> [deployment\_cloud\_region](#input\_deployment\_cloud\_region) | Cloud region recorded as deployment metadata | `string` | `null` | no |
 | <a name="input_deployment_traffic_mirroring_enabled"></a> [deployment\_traffic\_mirroring\_enabled](#input\_deployment\_traffic\_mirroring\_enabled) | Whether this Terraform path explicitly enabled traffic mirroring | `bool` | `null` | no |
 | <a name="input_fedramp_mode_enabled"></a> [fedramp\_mode\_enabled](#input\_fedramp\_mode\_enabled) | (optional) enable Fedramp mode | `bool` | `false` | no |
 | <a name="input_fleet_http_proxy"></a> [fleet\_http\_proxy](#input\_fleet\_http\_proxy) | (optional) the proxy URL for HTTP traffic from the fleet | `string` | `""` | no |

@@ -35,27 +35,17 @@ run "test_minimal_configuration" {
 
   assert {
     condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_provider"] == "azure",
+      yamldecode(base64decode(one([
+        for file in yamldecode(module.sensor_config.cloudinit_config.part[0].content).write_files : file.content
+        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ]))) == {
+        "deployment_metadata.terraform_module" = "azure/sensor"
+      },
       false,
     )
-    error_message = "Provider module should pass deployment metadata to shared cloud-init"
+    error_message = "Emitted metadata must retain this module identity and known mirroring state without provider or region"
   }
 
-  assert {
-    condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.terraform_module"] == "azure/sensor",
-      false,
-    )
-    error_message = "Provider module should pass its Terraform module identity"
-  }
-
-  assert {
-    condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_region"] == "eastus",
-      false,
-    )
-    error_message = "Provider module should pass the Azure location to shared cloud-init"
-  }
 }
 
 run "test_with_fleet_proxy_configuration" {

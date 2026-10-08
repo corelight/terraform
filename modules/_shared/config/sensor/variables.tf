@@ -112,34 +112,6 @@ variable "fedramp_mode_enabled" {
   description = "(optional) enable Fedramp mode"
 }
 
-variable "deployment_cloud_provider" {
-  type        = string
-  default     = null
-  description = "Cloud provider recorded as deployment metadata"
-
-  validation {
-    condition = var.deployment_cloud_provider == null ? true : contains(
-      ["aws", "azure", "gcp"], var.deployment_cloud_provider
-    )
-    error_message = "deployment_cloud_provider must be aws, azure, gcp, or null."
-  }
-}
-
-variable "deployment_cloud_region" {
-  type        = string
-  default     = null
-  description = "Cloud region recorded as deployment metadata"
-
-  validation {
-    condition = var.deployment_cloud_region == null ? true : (
-      length(trimspace(var.deployment_cloud_region)) > 0 &&
-      length(base64encode(trimspace(var.deployment_cloud_region))) <= 340 &&
-      !can(regex("\\p{Cc}", var.deployment_cloud_region))
-    )
-    error_message = "deployment_cloud_region must be 1-255 UTF-8 bytes without control characters, or null."
-  }
-}
-
 variable "deployment_traffic_mirroring_enabled" {
   type        = bool
   default     = null

@@ -41,6 +41,13 @@ on average CPU across the group:
 Termination policy is `OldestInstance`. CPU thresholds and evaluation periods
 are not currently exposed as input variables.
 
+## Deployment metadata
+
+This module records its Terraform module identity, published module version, and
+mirroring state when known. `corelightctl` discovers cloud provider and region.
+See the [shared metadata contract and sensor compatibility requirements](../../_shared/config/sensor/README.md#deployment-metadata)
+before upgrading: older sensors may report unknown/null provider and region.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

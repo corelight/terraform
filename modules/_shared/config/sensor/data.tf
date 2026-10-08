@@ -9,26 +9,18 @@ locals {
       local.terraform_module_version_raw,
     )) ? local.terraform_module_version_raw : null
   )
-  deployment_metadata = (
-    var.deployment_cloud_provider == null || var.deployment_cloud_region == null
-    ? null
-    : merge(
-      {
-        "deployment_metadata.cloud_provider" = var.deployment_cloud_provider
-        "deployment_metadata.cloud_region"   = trimspace(var.deployment_cloud_region)
-      },
-      var.deployment_traffic_mirroring_enabled == null ? {} : {
-        "deployment_metadata.cloud_traffic_mirroring_enabled" = tostring(var.deployment_traffic_mirroring_enabled)
-      },
-      local.terraform_module_version == null ? {} : {
-        "deployment_metadata.terraform_module_version" = local.terraform_module_version
-      },
-      var.terraform_module == null ? {} : {
-        "deployment_metadata.terraform_module" = var.terraform_module
-      },
-    )
+  deployment_metadata = merge(
+    var.deployment_traffic_mirroring_enabled == null ? {} : {
+      "deployment_metadata.cloud_traffic_mirroring_enabled" = tostring(var.deployment_traffic_mirroring_enabled)
+    },
+    local.terraform_module_version == null ? {} : {
+      "deployment_metadata.terraform_module_version" = local.terraform_module_version
+    },
+    var.terraform_module == null ? {} : {
+      "deployment_metadata.terraform_module" = var.terraform_module
+    },
   )
-  deployment_metadata_yaml = local.deployment_metadata == null ? "" : yamlencode(local.deployment_metadata)
+  deployment_metadata_yaml = length(local.deployment_metadata) == 0 ? "" : yamlencode(local.deployment_metadata)
 }
 
 data "cloudinit_config" "config" {

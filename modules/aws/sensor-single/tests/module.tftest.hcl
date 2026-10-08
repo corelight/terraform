@@ -2,12 +2,6 @@
 # These tests validate the module directly
 
 mock_provider "aws" {
-  mock_data "aws_region" {
-    defaults = {
-      name = "us-east-1"
-    }
-  }
-
   mock_data "aws_subnet" {
     defaults = {
       arn               = "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-mock"
@@ -49,27 +43,17 @@ run "test_minimal_configuration" {
 
   assert {
     condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.config[0].cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_provider"] == "aws",
+      yamldecode(base64decode(one([
+        for file in yamldecode(module.config[0].cloudinit_config.part[0].content).write_files : file.content
+        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ]))) == {
+        "deployment_metadata.terraform_module" = "aws/sensor-single"
+      },
       false,
     )
-    error_message = "Provider module should pass deployment metadata to shared cloud-init"
+    error_message = "Emitted metadata must retain this module identity and known mirroring state without provider or region"
   }
 
-  assert {
-    condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.config[0].cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.terraform_module"] == "aws/sensor-single",
-      false,
-    )
-    error_message = "Provider module should pass its Terraform module identity"
-  }
-
-  assert {
-    condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.config[0].cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_region"] == "us-east-1",
-      false,
-    )
-    error_message = "Provider module should pass the active AWS region to shared cloud-init"
-  }
 }
 
 run "test_custom_sensor_user_data_bypasses_generated_metadata" {
