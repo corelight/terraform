@@ -14,8 +14,6 @@ run "preserve_fleet_pairing_with_deployment_metadata" {
     fleet_http_proxy                     = "http://proxy.example.com:8080"
     fleet_https_proxy                    = "http://proxy.example.com:8443"
     fleet_no_proxy                       = "localhost,127.0.0.1"
-    deployment_cloud_provider            = "aws"
-    deployment_cloud_region              = "us-east-1"
     deployment_traffic_mirroring_enabled = true
     terraform_module_version             = "v29.0.5-7"
     terraform_module                     = "aws/sensor"
@@ -45,8 +43,6 @@ run "preserve_fleet_pairing_with_deployment_metadata" {
         for file in yamldecode(data.cloudinit_config.config.part[0].content).write_files : file.content
         if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
         ]))) == {
-        "deployment_metadata.cloud_provider"                  = "aws"
-        "deployment_metadata.cloud_region"                    = "us-east-1"
         "deployment_metadata.cloud_traffic_mirroring_enabled" = "true"
         "deployment_metadata.terraform_module_version"        = "v29.0.5-7"
         "deployment_metadata.terraform_module"                = "aws/sensor"

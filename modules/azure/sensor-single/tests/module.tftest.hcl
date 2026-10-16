@@ -19,9 +19,15 @@ run "verify_terraform_module_identity" {
 
   assert {
     condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config[0].cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.terraform_module"] == "azure/sensor-single",
+      yamldecode(base64decode(one([
+        for file in yamldecode(module.sensor_config[0].cloudinit_config.part[0].content).write_files : file.content
+        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ]))) == {
+        "deployment_metadata.terraform_module" = "azure/sensor-single"
+      },
       false,
     )
-    error_message = "Provider module should pass its Terraform module identity"
+    error_message = "Emitted metadata must retain this module identity and known mirroring state without provider or region"
   }
+
 }

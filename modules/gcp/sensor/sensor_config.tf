@@ -1,8 +1,6 @@
 module "sensor_config" {
   source = "../../_shared/config/sensor"
 
-  deployment_cloud_provider            = "gcp"
-  deployment_cloud_region              = var.region
   deployment_traffic_mirroring_enabled = true
   terraform_module                     = "gcp/sensor"
 

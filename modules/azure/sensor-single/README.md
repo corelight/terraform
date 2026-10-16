@@ -53,6 +53,13 @@ module "sensor" {
 - A Corelight sensor image must be available in the subscription. Use [`scripts/azure/copy-azure-image.sh`](../../../scripts/azure/copy-azure-image.sh) to copy the VHD and create a VM image.
 - The management subnet must have outbound internet access (via NAT gateway, Azure Firewall, or other mechanism) for Fleet connectivity.
 
+## Deployment metadata
+
+This module records its Terraform module identity, published module version, and
+mirroring state when known. `corelightctl` discovers cloud provider and region.
+See the [shared metadata contract and sensor compatibility requirements](../../_shared/config/sensor/README.md#deployment-metadata)
+before upgrading: older sensors may report unknown/null provider and region.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

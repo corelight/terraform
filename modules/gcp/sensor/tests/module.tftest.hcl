@@ -47,35 +47,18 @@ run "verify_required_variables" {
 
   assert {
     condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_provider"] == "gcp",
+      yamldecode(base64decode(one([
+        for file in yamldecode(module.sensor_config.cloudinit_config.part[0].content).write_files : file.content
+        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ]))) == {
+        "deployment_metadata.terraform_module"                = "gcp/sensor"
+        "deployment_metadata.cloud_traffic_mirroring_enabled" = "true"
+      },
       false,
     )
-    error_message = "Provider module should pass deployment metadata to shared cloud-init"
+    error_message = "Emitted metadata must retain this module identity and known mirroring state without provider or region"
   }
 
-  assert {
-    condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.terraform_module"] == "gcp/sensor",
-      false,
-    )
-    error_message = "Provider module should pass its Terraform module identity"
-  }
-
-  assert {
-    condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_region"] == "us-west1",
-      false,
-    )
-    error_message = "Provider module should pass the GCP region to shared cloud-init"
-  }
-
-  assert {
-    condition = try(
-      yamldecode(base64decode(trimspace(split("\n", split("content: ", split("path: /etc/corelight/deployment-metadata.yaml", module.sensor_config.cloudinit_config.part[0].content)[1])[1])[0])))["deployment_metadata.cloud_traffic_mirroring_enabled"] == "true",
-      false,
-    )
-    error_message = "GCP provider module should pass known packet-mirroring metadata"
-  }
 }
 
 run "verify_custom_names" {
