@@ -16,11 +16,11 @@ run "verify_release_stamped_module_version" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(data.cloudinit_config.config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == merge(
-        { "deployment_metadata.terraform_module" = "aws/sensor" },
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == merge(
+        { terraformModule = "aws/sensor" },
         chomp(file("${path.module}/../../../../RELEASE_VERSION")) == "" ? {} : {
-          "deployment_metadata.terraform_module_version" = chomp(file("${path.module}/../../../../RELEASE_VERSION"))
+          terraformModuleVersion = chomp(file("${path.module}/../../../../RELEASE_VERSION"))
         },
       ),
       false,

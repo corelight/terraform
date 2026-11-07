@@ -45,9 +45,9 @@ run "test_minimal_configuration" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(module.config[0].cloudinit_config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == {
-        "deployment_metadata.terraform_module" = "aws/sensor-single"
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == {
+        terraformModule = "aws/sensor-single"
       },
       false,
     )

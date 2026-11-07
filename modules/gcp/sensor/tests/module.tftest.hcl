@@ -49,10 +49,10 @@ run "verify_required_variables" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(module.sensor_config.cloudinit_config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == {
-        "deployment_metadata.terraform_module"                = "gcp/sensor"
-        "deployment_metadata.cloud_traffic_mirroring_enabled" = "true"
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == {
+        terraformModule              = "gcp/sensor"
+        cloudTrafficMirroringEnabled = "true"
       },
       false,
     )
