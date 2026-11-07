@@ -39,7 +39,29 @@ write_files:
               port: ${health_port}
               net: ${probe}
 %{ endfor ~}
-%{ if fleet_token != "" && fleet_url != "" ~}
+%{ if fleet_token != "" && fleet_url != "" && deployment_metadata == "" ~}
+        pairing:
+          token: ${fleet_token}
+          url: ${fleet_url}
+          server_sslname: ${fleet_server_sslname}
+%{ if fleet_http_proxy != "" ~}
+          http_proxy: ${fleet_http_proxy}
+%{ endif ~}
+%{ if fleet_https_proxy != "" ~}
+          https_proxy: ${fleet_https_proxy}
+%{ endif ~}
+%{ if fleet_no_proxy != "" ~}
+          no_proxy: ${fleet_no_proxy}
+%{ endif ~}
+%{ endif ~}
+%{ if fleet_token != "" && fleet_url != "" && deployment_metadata != "" ~}
+  # A Fleet-managed sensor rejects direct configuration, so pairing is applied
+  # only after deployment metadata has been written to the unpaired sensor.
+  - owner: root:root
+    path: /etc/corelight/fleet-pairing.yaml
+    permissions: '0600'
+    content: |
+      sensor:
         pairing:
           token: ${fleet_token}
           url: ${fleet_url}
@@ -71,6 +93,13 @@ runcmd:
     if ! corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml; then
       logger -t corelight-deployment-metadata "Sensor API did not accept deployment metadata; inventory fields will remain null"
     fi
+%{ if fleet_token != "" && fleet_url != "" ~}
+    install -D -m 0600 /etc/corelight/fleet-pairing.yaml /etc/corelight/corelightctl.yaml.d/01-fleet.yaml
+    rm -f /etc/corelight/fleet-pairing.yaml
+    if ! corelightctl sensor deploy -v; then
+      exit 1
+    fi
+%{ endif ~}
 %{ else ~}
   - corelightctl sensor deploy -v
 %{ endif ~}
