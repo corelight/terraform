@@ -21,6 +21,8 @@ Version format: `<SENSOR_VERSION>-<TERRAFORM_METADATA>`
 
 ### Changed
 
+- **Sensor version** - `VERSION` is now `29.3.0`; the next release is tagged `v29.3.0-1`.
+
 - **aws/sensor, aws/sensor-single, azure/sensor, azure/sensor-single, gcp/sensor** - Stop provisioning `cloud_provider` and `cloud_region`; `corelightctl` discovers them through the CLOUD-1534 instance metadata probe. Module identity, release-stamped module version, and known traffic-mirroring metadata remain unchanged. Existing provisioning region/provider settings are unaffected.
   - Direct shared-config consumers must remove the retired `deployment_cloud_provider` and `deployment_cloud_region` arguments.
   - Older modules with updated `corelightctl` use the probe. These modules with older `corelightctl` may report unknown/null provider and region.
