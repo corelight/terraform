@@ -5,7 +5,7 @@ This document provides a comprehensive guide for AI assistants and developers wo
 ## Repository Overview
 
 **Repository**: `github.com/corelight/terraform`
-**Current Sensor**: `29.0.5` (see `VERSION`; meta is tag-derived)
+**Current Sensor**: `29.3.0` (see `VERSION`; meta is tag-derived)
 **Purpose**: Consolidated Terraform modules for deploying Corelight sensors, enrichment, and Fleet across AWS, GCP, and Azure.
 
 ## Core Principles

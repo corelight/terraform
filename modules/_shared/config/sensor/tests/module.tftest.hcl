@@ -126,7 +126,7 @@ run "verify_deployment_metadata" {
   assert {
     condition = strcontains(
       data.cloudinit_config.config.part[0].content,
-      "path: /etc/corelight/deployment-metadata.yaml",
+      "path: /etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml",
     )
     error_message = "Cloud-init should persist deployment metadata"
   }
@@ -135,11 +135,11 @@ run "verify_deployment_metadata" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(data.cloudinit_config.config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == {
-        "deployment_metadata.cloud_traffic_mirroring_enabled" = "true"
-        "deployment_metadata.terraform_module_version"        = "v29.0.5-7"
-        "deployment_metadata.terraform_module"                = "aws/sensor"
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == {
+        cloudTrafficMirroringEnabled = "true"
+        terraformModuleVersion       = "v29.0.5-7"
+        terraformModule              = "aws/sensor"
       },
       false,
     )
@@ -147,11 +147,8 @@ run "verify_deployment_metadata" {
   }
 
   assert {
-    condition = strcontains(
-      data.cloudinit_config.config.part[0].content,
-      "corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml",
-    )
-    error_message = "Cloud-init should apply metadata through the existing configuration command"
+    condition     = !strcontains(data.cloudinit_config.config.part[0].content, "configuration put")
+    error_message = "Deploy must seed metadata from the values drop-in; Fleet-paired sensors reject configuration put"
   }
 }
 
@@ -171,9 +168,9 @@ run "verify_unknown_mirroring_is_omitted" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(data.cloudinit_config.config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == {
-        "deployment_metadata.terraform_module" = "azure/sensor"
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == {
+        terraformModule = "azure/sensor"
       },
       false,
     )
@@ -212,9 +209,9 @@ run "verify_malformed_terraform_module_version_is_omitted" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(data.cloudinit_config.config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == {
-        "deployment_metadata.terraform_module" = "gcp/sensor"
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == {
+        terraformModule = "gcp/sensor"
       },
       false,
     )
@@ -239,9 +236,9 @@ run "verify_overlong_terraform_module_version_is_omitted" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(data.cloudinit_config.config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == {
-        "deployment_metadata.terraform_module" = "gcp/sensor"
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == {
+        terraformModule = "gcp/sensor"
       },
       false,
     )
@@ -266,9 +263,9 @@ run "verify_false_mirroring" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(data.cloudinit_config.config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == {
-        "deployment_metadata.cloud_traffic_mirroring_enabled" = "false"
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == {
+        cloudTrafficMirroringEnabled = "false"
       },
       false,
     )
@@ -291,13 +288,13 @@ run "verify_absent_deployment_metadata" {
   assert {
     condition = !strcontains(
       data.cloudinit_config.config.part[0].content,
-      "/etc/corelight/deployment-metadata.yaml",
+      "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml",
     )
     error_message = "Direct callers without metadata should retain the old cloud-init"
   }
 }
 
-run "verify_metadata_application_follows_successful_deploy" {
+run "verify_metadata_uses_single_deploy" {
   command = plan
 
   variables {
@@ -309,11 +306,10 @@ run "verify_metadata_application_follows_successful_deploy" {
   }
 
   assert {
-    condition = strcontains(
-      data.cloudinit_config.config.part[0].content,
-      "    if ! corelightctl sensor deploy -v; then\n      exit 1\n    fi\n    if ! corelightctl sensor configuration put --file /etc/corelight/deployment-metadata.yaml; then\n      logger -t corelight-deployment-metadata \"Sensor API did not accept deployment metadata; inventory fields will remain null\"\n    fi",
-    )
-    error_message = "Metadata application should follow a successful deploy and remain best-effort"
+    condition = yamldecode(data.cloudinit_config.config.part[0].content).runcmd == [
+      "corelightctl sensor deploy -v",
+    ]
+    error_message = "Metadata must be applied by the one sensor deploy"
   }
 }
 run "verify_module_version_without_identity_or_mirroring" {
@@ -331,9 +327,9 @@ run "verify_module_version_without_identity_or_mirroring" {
     condition = try(
       yamldecode(base64decode(one([
         for file in yamldecode(data.cloudinit_config.config.part[0].content).write_files : file.content
-        if file.path == "/etc/corelight/deployment-metadata.yaml" && try(file.encoding, "") == "b64"
-        ]))) == {
-        "deployment_metadata.terraform_module_version" = "v29.0.5-7"
+        if file.path == "/etc/corelight/corelightctl-values.yaml.d/10-deployment-metadata.yaml" && try(file.encoding, "") == "b64"
+        ])))["sensor-api"].deploymentMetadata == {
+        terraformModuleVersion = "v29.0.5-7"
       },
       false,
     )
